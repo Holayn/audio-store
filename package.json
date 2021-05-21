@@ -1,0 +1,11 @@
+{
+  "private": true,
+  "name": "audio-store",
+  "workspaces": [
+    "packages/audio-store-server",
+    "packages/audio-store-web"
+  ],
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT"
+}
