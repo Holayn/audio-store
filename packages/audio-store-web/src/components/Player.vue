@@ -1,6 +1,6 @@
 <template>
   <div class="flex items-center justify-center">
-    <audio autoplay controls>
+    <audio ref="audio-elem" autoplay controls>
       <source v-if="audioData" :src="audioUrl" type="audio/mpeg">
     </audio>
   </div>
@@ -13,7 +13,6 @@ export default {
   name: 'Player',
   data() {
     return {
-      // track: this.$store.state.currentTrack,
       audioData: null,
     };
   },
@@ -36,12 +35,22 @@ export default {
     },
   },
   methods: {
-    async loadTrack() {
+    async loadTrack(track) {
+      if (!track) {
+        return;
+      }
+
       try {
         const { data: audioData } = await db.getDb().get('audio', this.track.audioId);
 
-        this.audioData = audioData;
+        if (this.audioData) {
+          this.audioData = audioData;
+          this.$refs['audio-elem'].load();
+        } else {
+          this.audioData = audioData;
+        }
       } catch (e) {
+        this.$store.dispatch('clearTrack');
         this.$emit('track-fail');
       }
     },

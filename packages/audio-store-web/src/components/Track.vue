@@ -17,7 +17,7 @@ export default {
   name: 'Track',
   props: ['track'],
   methods: {
-    async loadTrack() {
+    loadTrack() {
       this.$store.dispatch('loadCurrentTrack', this.track);
     },
   },

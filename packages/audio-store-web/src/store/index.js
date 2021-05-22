@@ -2,6 +2,8 @@ import { createStore } from 'vuex';
 
 import db from '../services/db';
 
+import { createNewTrack, loadTrackAudio } from '../services/track';
+
 export default createStore({
   state: {
     currentTrack: {},
@@ -29,11 +31,18 @@ export default createStore({
       commit('tracks', tracks);
     },
     async loadCurrentTrack({ commit }, track) {
-      commit('currentTrack', track);
+      if (!track.loaded) {
+        const updatedTrack = await loadTrackAudio(track);
+        commit('currentTrack', updatedTrack);
+      } else {
+        commit('currentTrack', track);
+      }
     },
     async fetchTrack({ commit }, url) {
-      const track = await db.fetchUrlAndAddToDB(url);
-      commit('track', track);
+      commit('track', await createNewTrack(url));
+    },
+    clearTrack({ commit }) {
+      commit('currentTrack', null);
     },
   },
   getters: {
