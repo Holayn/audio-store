@@ -10,7 +10,7 @@ class DB {
   }
 
   async init() {
-    await deleteDB('audioFiles');
+    // await deleteDB('audioFiles');
     const newDB = await openDB('audioFiles', 1, {
       async upgrade(database) {
         database.createObjectStore('audio', {
@@ -28,27 +28,27 @@ class DB {
     });
 
     // populate db with tracks. this should come from a database
-    await newDB.add('tracks', {
-      title: 'track1',
-      url: 'http://youtube.com',
-      audioId: null,
-      loaded: false,
-      dateAdded: Date.now(),
-    });
-    await newDB.add('tracks', {
-      title: 'track2',
-      url: 'http://youtube.com',
-      audioId: null,
-      loaded: false,
-      dateAdded: Date.now(),
-    });
-    await newDB.add('tracks', {
-      title: 'track3',
-      url: 'http://youtube.com',
-      audioId: null,
-      loaded: false,
-      dateAdded: Date.now(),
-    });
+    // await newDB.add('tracks', {
+    //   title: 'track1',
+    //   url: 'http://youtube.com',
+    //   audioId: null,
+    //   loaded: false,
+    //   dateAdded: Date.now(),
+    // });
+    // await newDB.add('tracks', {
+    //   title: 'track2',
+    //   url: 'http://youtube.com',
+    //   audioId: null,
+    //   loaded: false,
+    //   dateAdded: Date.now(),
+    // });
+    // await newDB.add('tracks', {
+    //   title: 'track3',
+    //   url: 'http://youtube.com',
+    //   audioId: null,
+    //   loaded: false,
+    //   dateAdded: Date.now(),
+    // });
 
     this.db = newDB;
 

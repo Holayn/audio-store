@@ -9,6 +9,17 @@
     <div>
       {{this.track.title}}
     </div>
+    <div class="pl-2">
+      <span v-if="this.track.loaded">(loaded)</span>
+    </div>
+    <div v-if="this.track.loaded" class="pl-2">
+      <button
+        type="button"
+        @click="unload()"
+        class="w-16 rounded-md bg-black text-white">
+        unload
+      </button>
+    </div>
   </div>
 </template>
 
@@ -19,6 +30,9 @@ export default {
   methods: {
     loadTrack() {
       this.$store.dispatch('loadCurrentTrack', this.track);
+    },
+    unload() {
+      this.$store.dispatch('unloadTrack', this.track);
     },
   },
 };

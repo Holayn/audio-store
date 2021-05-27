@@ -28,6 +28,10 @@ export async function createNewTrack(url) {
 export async function loadTrackAudio(track) {
   const audioBlob = await fetchUrl(track.url);
 
+  if (!audioBlob) {
+    return null;
+  }
+
   const database = await db.getDb();
   const audioId = await database.add('audio', {
     data: audioBlob,
@@ -40,6 +44,19 @@ export async function loadTrackAudio(track) {
   };
 
   await database.put('tracks', updatedTrack);
+
+  return updatedTrack;
+}
+
+export async function unloadTrackAudio(track) {
+  const database = await db.getDb();
+  await database.delete('audio', track.audioId);
+
+  const updatedTrack = {
+    ...track,
+    loaded: false,
+    audioId: null,
+  };
 
   return updatedTrack;
 }
