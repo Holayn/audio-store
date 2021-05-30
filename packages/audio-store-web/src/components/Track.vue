@@ -1,16 +1,14 @@
 <template>
-  <div class="flex p-2 m-1 bg-gray-100 rounded-md">
+  <div class="flex p-2 m-1 bg-gray-100 rounded-md" :class="{'bg-green-50': this.track.loaded}">
     <button
       type="button"
       @click="loadTrack()"
-      class="w-16 h-1/2 mr-4 flex items-center justify-center rounded-md bg-black text-white">
-      play
+      style="height: 3rem; width: 3rem; min-width: 3rem;"
+      class="mr-4 flex items-center justify-center rounded-full bg-black text-white">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
     </button>
     <div>
       {{this.track.title}}
-    </div>
-    <div class="pl-2">
-      <span v-if="this.track.loaded">(loaded)</span>
     </div>
     <div v-if="this.track.loaded" class="pl-2">
       <button
