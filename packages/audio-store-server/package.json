@@ -12,6 +12,8 @@
     "express-fileupload": "^1.2.1",
     "express-winston": "^4.1.0",
     "helmet": "^4.5.0",
-    "winston": "^3.3.3"
+    "sanitize-filename": "^1.6.3",
+    "winston": "^3.3.3",
+    "ytdl-core": "^4.8.2"
   }
 }
