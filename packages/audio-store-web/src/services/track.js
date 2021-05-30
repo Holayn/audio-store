@@ -101,5 +101,7 @@ export async function unloadTrackAudio(track) {
     audioId: null,
   };
 
+  await database.put('tracks', updatedTrack);
+
   return updatedTrack;
 }

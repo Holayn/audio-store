@@ -10,7 +10,7 @@
       </div>
     </div>
     <div>
-      <Player @trackFail="trackFailed(event)"/>
+      <Player @trackFail="trackFailed($event)"/>
     </div>
   </div>
 </template>

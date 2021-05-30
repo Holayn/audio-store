@@ -1,6 +1,6 @@
 <template>
   <div class="flex items-center justify-center">
-    <audio ref="audio-elem" autoplay controls>
+    <audio ref="audio-elem" @ended="onEnd()" autoplay controls>
       <source v-if="audioData" :src="audioUrl" type="audio/mpeg">
     </audio>
   </div>
@@ -51,8 +51,11 @@ export default {
         }
       } catch (e) {
         this.$store.dispatch('clearTrack');
-        this.$emit('track-fail');
+        this.$emit('track-fail', track);
       }
+    },
+    onEnd() {
+      this.$store.dispatch('loadNextTrackAsCurrent');
     },
   },
 };

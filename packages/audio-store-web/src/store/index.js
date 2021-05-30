@@ -63,6 +63,18 @@ export default createStore({
     clearTrack({ commit }) {
       commit('currentTrack', null);
     },
+    async loadNextTrackAsCurrent({ dispatch, state }) {
+      let currentTrackIndex = null;
+      for (let i = 0; i < state.tracks.length; i += 1) {
+        if (state.tracks[i].id === state.currentTrack.id) {
+          currentTrackIndex = i;
+        }
+      }
+
+      if (currentTrackIndex != null && currentTrackIndex + 1 !== state.tracks.length) {
+        dispatch('loadCurrentTrack', state.tracks[currentTrackIndex + 1]);
+      }
+    },
   },
   getters: {
     currentTrack(state) {
