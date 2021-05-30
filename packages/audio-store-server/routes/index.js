@@ -14,6 +14,21 @@ router.get('/file', (req, res) => {
   });
 });
 
+router.get('/trackinfo', async (req, res) => {
+  if (!req.query.url) {
+    console.error('no url provided');
+    res.sendStatus(400);
+    return;
+  }
+
+  const {videoDetails} = await downloader.getInfo(req.query.url);
+  const {title, lengthSeconds: length} = videoDetails;
+  res.send({
+    title,
+    length,
+  });
+});
+
 router.get('/download', async (req, res) => {
   if (!req.query.url) {
     console.error('no url provided');

@@ -11,6 +11,10 @@ if (!fs.existsSync('library.json')) {
   library = JSON.parse(fs.readFileSync('library.json'));
 }
 
+const getInfo = async (url) => {
+  return ytdl.getBasicInfo(url);
+}
+
 const download = async (url) => {
   const {videoDetails} = await ytdl.getBasicInfo(url);
   const {title, videoId} = videoDetails;
@@ -20,7 +24,7 @@ const download = async (url) => {
   }
 
   return new Promise((res, rej) => {
-    const stream = ytdl('https://www.youtube.com/watch?v=N-yhJChOb_g', {
+    const stream = ytdl(url, {
       quality: 'highestaudio',
       filter: 'audioonly',
     });
@@ -44,4 +48,5 @@ const download = async (url) => {
 
 module.exports = {
   download,
+  getInfo,
 }
