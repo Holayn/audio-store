@@ -15,6 +15,7 @@ export async function getTracks() {
           ...track,
           loaded: false,
           audioId: null,
+          size: null,
         };
 
         await database.put('tracks', track);
@@ -33,7 +34,6 @@ export async function createNewTrack(url) {
   const res = await Promise.all(keys.map(async (key) => {
     const track = await database.get('tracks', key);
 
-    // verify that audio is really loaded
     if (track.videoId === videoId) {
       return false;
     }
@@ -55,6 +55,7 @@ export async function createNewTrack(url) {
     title: `${title}`,
     loaded: false,
     dateAdded: Date.now(),
+    size: audioBlob.size,
     url,
     audioId,
     videoId,
@@ -84,6 +85,7 @@ export async function loadTrackAudio(track) {
     ...track,
     loaded: true,
     audioId,
+    size: audioBlob.size,
   };
 
   await database.put('tracks', updatedTrack);
@@ -99,6 +101,7 @@ export async function unloadTrackAudio(track) {
     ...track,
     loaded: false,
     audioId: null,
+    size: null,
   };
 
   await database.put('tracks', updatedTrack);
