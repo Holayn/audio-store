@@ -5,7 +5,7 @@
       <AddTrack/>
     </div>
     <div class="flex items-start justify-center h-full overflow-y-auto">
-      <div class="justify-center">
+      <div class="justify-center max-w-full">
         <Track v-for="track in tracks" :key="track.id" :track="track" @trackLoaded="trackLoaded()"/>
       </div>
     </div>
