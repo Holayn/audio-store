@@ -1,11 +1,19 @@
 const AUDIO_FETCH_BASE_URL = 'http://localhost:8000';
-const AUDIO_FETCH_AUDIO_API_PATH = '/file';
+const AUDIO_FETCH_AUDIO_API_PATH = '/download';
+const AUDIO_FETCH_AUDIO_INFO_PATH = '/trackinfo';
 
-export default async function fetchUrl(url) {
-  const apiUrl = `${AUDIO_FETCH_BASE_URL}${AUDIO_FETCH_AUDIO_API_PATH}?track=${url}`;
+export async function fetchInfo(url) {
+  const apiUrl = `${AUDIO_FETCH_BASE_URL}${AUDIO_FETCH_AUDIO_INFO_PATH}?url=${url}`;
+  return (await fetch(apiUrl).catch(() => {
+    alert('something went wrong');
+  })).json();
+}
+
+export async function fetchTrack(url) {
+  const apiUrl = `${AUDIO_FETCH_BASE_URL}${AUDIO_FETCH_AUDIO_API_PATH}?url=${url}`;
 
   const audioBlob = await (await fetch(apiUrl).catch(() => {
-    alert('connection to server failed');
+    alert('something went wrong');
   })).blob();
 
   return audioBlob;

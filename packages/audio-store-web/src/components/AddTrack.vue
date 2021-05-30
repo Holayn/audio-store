@@ -1,6 +1,6 @@
 <template>
   <div class="flex justify-center items-center">
-    <input type="text" v-bind="urlToLoad" class="border text-gray-900" placeholder="yt url">
+    <input type="text" v-model="urlToLoad" class="border text-gray-900" placeholder="yt url">
     <button
       type="button"
       @click="loadTrack()"
@@ -26,7 +26,7 @@ export default {
   },
   methods: {
     async loadTrack() {
-      this.$store.dispatch('fetchTrack');
+      this.$store.dispatch('addNewTrack', this.urlToLoad);
     },
   },
 };
