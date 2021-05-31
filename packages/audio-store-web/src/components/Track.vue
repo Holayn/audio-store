@@ -12,7 +12,7 @@
       {{this.track.title}}
     </div>
     <div>
-      <svg @click="showMenu = !showMenu" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+      <svg @click="toggleMenu()" class="cursor-pointer" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
     </div>
   </div>
   <div v-if="showMenu">
@@ -28,6 +28,12 @@
       @click="remove()"
       class="mx-1 w-16 rounded-md bg-black text-white">
       remove
+    </button>
+    <button
+      type="button"
+      @click="info()"
+      class="mx-1 w-16 rounded-md bg-black text-white">
+      info
     </button>
   </div>
 </div>
@@ -47,10 +53,19 @@ export default {
       this.$store.dispatch('loadCurrentTrack', this.track);
     },
     unload() {
+      this.toggleMenu();
       this.$store.dispatch('unloadTrack', this.track);
     },
     remove() {
+      this.toggleMenu();
       this.$store.dispatch('removeTrack', this.track);
+    },
+    info() {
+      alert(this.track);
+      // this.$store.dispatch('removeTrack', this.track);
+    },
+    toggleMenu() {
+      this.showMenu = !this.showMenu;
     },
   },
 };

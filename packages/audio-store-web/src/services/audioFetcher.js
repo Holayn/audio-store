@@ -1,4 +1,4 @@
-const AUDIO_FETCH_BASE_URL = 'http://localhost:8000';
+const AUDIO_FETCH_BASE_URL = 'http://192.168.0.133:8000';
 const AUDIO_FETCH_AUDIO_API_PATH = '/download';
 const AUDIO_FETCH_AUDIO_INFO_PATH = '/trackinfo';
 

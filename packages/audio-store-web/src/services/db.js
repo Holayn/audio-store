@@ -80,6 +80,23 @@ class DB {
 
     return newDB;
   }
+
+  async getSizeOfAudioStore() {
+    const database = await this.getDb();
+    const keys = await database.getAllKeys('tracks');
+    const res = await Promise.all(keys.map(async (key) => {
+      const track = await database.get('tracks', key);
+      return track.size;
+    }));
+
+    return res.reduce((acc, curr) => {
+      if (curr != null) {
+        return acc + curr;
+      }
+
+      return acc;
+    }, 0);
+  }
 }
 
 const db = new DB();
