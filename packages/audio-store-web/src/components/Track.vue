@@ -61,7 +61,11 @@ export default {
       this.$store.dispatch('removeTrack', this.track);
     },
     info() {
-      alert(this.track);
+      alert(`
+        date added: ${this.track.dateAdded}
+        size: ${(this.track.size ? this.track.size : 0) / 1000000} mb
+        url: ${this.track.url}
+      `);
       // this.$store.dispatch('removeTrack', this.track);
     },
     toggleMenu() {
