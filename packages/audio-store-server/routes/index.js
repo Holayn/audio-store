@@ -22,10 +22,11 @@ router.get('/trackinfo', async (req, res) => {
   }
 
   const {videoDetails} = await downloader.getInfo(req.query.url);
-  const {title, lengthSeconds: length} = videoDetails;
+  const {title, lengthSeconds: length, videoId} = videoDetails;
   res.send({
     title,
     length,
+    videoId,
   });
 });
 
