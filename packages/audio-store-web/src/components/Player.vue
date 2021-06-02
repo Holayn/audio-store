@@ -1,5 +1,5 @@
 <template>
-  <div class="flex items-center justify-center">
+  <div class="flex items-center justify-center bg-gray-900">
     <audio ref="audio-elem" @ended="onEnd()" autoplay controls>
       <source v-if="audioData" :src="audioUrl" type="audio/mpeg">
     </audio>

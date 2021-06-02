@@ -70,6 +70,11 @@ class DB {
           keyPath: 'id',
           autoIncrement: true,
         });
+
+        database.createObjectStore('playlists', {
+          keyPath: 'id',
+          autoIncrement: true,
+        });
       },
     });
 
