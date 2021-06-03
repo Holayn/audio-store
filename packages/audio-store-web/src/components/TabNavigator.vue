@@ -5,7 +5,7 @@
       :class="{
         'border-t-2': this.currentRouteName === 'Load'
       }"
-       @click="go('load')"
+       @click="go('/load')"
     >
       <div>
         Load
@@ -14,7 +14,7 @@
     <div
       class="flex flex-auto h-10 items-center justify-center cursor-pointer"
       :class="{
-        'border-t-2': this.currentRouteName === 'Collection'
+        'border-t-2': this.currentRoutePath.match(/.*collection.*/)
       }"
       @click="go('/')"
     >
@@ -32,8 +32,10 @@ export default {
   },
   props: [],
   computed: {
+    currentRoutePath() {
+      return this.$route.path;
+    },
     currentRouteName() {
-      console.log(this.$route.name);
       return this.$route.name;
     },
   },

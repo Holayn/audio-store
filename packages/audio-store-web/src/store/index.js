@@ -2,7 +2,8 @@ import { createStore } from 'vuex';
 
 import {
   createNewTrack,
-  getTracks,
+  getAllTracks,
+  getTrack,
   loadTrackAudio,
   unloadTrackAudio,
 } from '../services/track';
@@ -10,7 +11,15 @@ import {
 export default createStore({
   state: {
     currentTrack: {},
+    playlists: {
+      1: {
+        id: 1,
+        tracks: [3, 1],
+        title: 'Test Playlist 1',
+      },
+    },
     tracks: [],
+    currentPlaylistId: null,
   },
   mutations: {
     currentTrack(state, track) {
@@ -31,8 +40,17 @@ export default createStore({
     },
   },
   actions: {
+    async getPlaylists({ commit }) {
+      // const tracks = await getPlaylists();
+      // commit('tracks', tracks);
+    },
+    async getPlaylistTracks({ commit, getters }, playlistId) {
+      const tracks = await Promise.all(getters.playlists[playlistId].tracks
+        .map((trackId) => getTrack(trackId)));
+      commit('tracks', tracks);
+    },
     async getTracks({ commit }) {
-      const tracks = await getTracks();
+      const tracks = await getAllTracks();
       commit('tracks', tracks);
     },
     async loadCurrentTrack({ commit }, track) {
@@ -79,6 +97,9 @@ export default createStore({
   getters: {
     currentTrack(state) {
       return state.currentTrack;
+    },
+    playlists(state) {
+      return state.playlists;
     },
     tracks(state) {
       return state.tracks;

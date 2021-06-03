@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="text-2xl">Tracks</div>
+    <div class="text-2xl">{{title}}</div>
     <div class="flex items-start justify-center overflow-y-auto">
       <div class="justify-center max-w-full">
         <Track v-for="track in tracks" :key="track.id" :track="track" @trackLoaded="trackLoaded()"/>
@@ -14,8 +14,9 @@ import Track from '@/components/Track.vue';
 
 export default {
   name: 'Home',
+  props: ['id'],
   async created() {
-    this.$store.dispatch('getTracks');
+    this.$store.dispatch('getPlaylistTracks', this.id);
   },
   components: {
     Track,
@@ -25,6 +26,9 @@ export default {
     };
   },
   computed: {
+    title() {
+      return this.$store.getters.playlists[this.id].title;
+    },
     tracks() {
       return this.$store.getters.tracks;
     },

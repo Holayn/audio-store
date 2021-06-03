@@ -1,7 +1,7 @@
 import db from './db';
 import { fetchInfo, fetchTrack } from './audioFetcher';
 
-export async function getTracks() {
+export async function getAllTracks() {
   const database = await db.getDb();
   const audioIds = await database.getAllKeys('audio');
   const keys = await database.getAllKeys('tracks');
@@ -24,6 +24,11 @@ export async function getTracks() {
 
     return track;
   }));
+}
+
+export async function getTrack(trackId) {
+  const database = await db.getDb();
+  return database.get('tracks', trackId);
 }
 
 export async function createNewTrack(url) {

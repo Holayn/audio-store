@@ -1,7 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Collection from '../views/Collection.vue';
+import CollectionView from '../views/CollectionView.vue';
 import Settings from '../views/Settings.vue';
-import Tracks from '../components/Tracks.vue';
+import Tracks from '../views/Tracks.vue';
 import Load from '../views/Load.vue';
 
 const routes = [
@@ -12,15 +13,21 @@ const routes = [
   },
   {
     path: '/collection',
-    name: 'Collection',
-    component: Collection,
-    // children: [
-    //   {
-    //     path: '',
-    //     name: 'Tracks',
-    //     component: Tracks,
-    //   },
-    // ],
+    name: 'CollectionView',
+    component: CollectionView,
+    children: [
+      {
+        path: '',
+        name: 'Collection',
+        component: Collection,
+      },
+      {
+        path: 'tracks/:id',
+        name: 'Tracks',
+        component: Tracks,
+        props: true,
+      },
+    ],
   },
   {
     path: '/settings',
