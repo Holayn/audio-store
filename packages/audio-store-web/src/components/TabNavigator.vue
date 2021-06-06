@@ -5,7 +5,7 @@
       :class="{
         'border-t-2': this.currentRouteName === 'Load'
       }"
-       @click="go('/load')"
+       @click="go('Load')"
     >
       <div>
         Load
@@ -16,7 +16,7 @@
       :class="{
         'border-t-2': this.currentRoutePath.match(/.*collection.*/)
       }"
-      @click="go('/')"
+      @click="go('Collection')"
     >
       <div>
         Collection
@@ -40,8 +40,8 @@ export default {
     },
   },
   methods: {
-    go(path) {
-      this.$router.push({ path });
+    go(name) {
+      this.$router.push({ name });
     },
   },
 };
