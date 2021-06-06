@@ -1,10 +1,33 @@
 const express = require('express');
 const path = require('path');
 const downloader = require('../services/downloader');
+const DB = require('../services/db');
 
 const router = express.Router();
 
+const db = new DB();
+
 router.get('/test', (req, res) => {
+  res.sendStatus(200);
+});
+
+router.get('/tracks', async (req, res) => {
+  const tracks = await db.getTracks();
+  res.send(tracks);
+});
+
+router.post('/backupTracks', async (req, res) => {
+  await db.backupTracks(req.body);
+  res.sendStatus(200);
+});
+
+router.get('/playlists', async (req, res) => {
+  const playlists = await db.getPlaylists();
+  res.send(playlists);
+});
+
+router.post('/backupPlaylists', async (req, res) => {
+  await db.backupPlaylists(req.body);
   res.sendStatus(200);
 });
 
