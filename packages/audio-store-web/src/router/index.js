@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import Collection from '../views/Collection.vue';
 import CollectionView from '../views/CollectionView.vue';
 import Settings from '../views/Settings.vue';
-import Tracks from '../views/Tracks.vue';
+import Playlist from '../views/Playlist.vue';
 import Load from '../views/Load.vue';
 
 const routes = [
@@ -22,9 +22,9 @@ const routes = [
         component: Collection,
       },
       {
-        path: 'tracks/:id',
-        name: 'Tracks',
-        component: Tracks,
+        path: 'playlist/:id',
+        name: 'Playlist',
+        component: Playlist,
         props: true,
       },
     ],

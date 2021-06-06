@@ -50,7 +50,7 @@ export default {
   },
   methods: {
     viewPlaylist(playlist) {
-      this.$router.push({ name: 'Tracks', params: { id: playlist.id } });
+      this.$router.push({ name: 'Playlist', params: { id: playlist.id } });
     },
     viewCreatePlaylist() {
       this.showCreatePlaylist = !this.showCreatePlaylist;

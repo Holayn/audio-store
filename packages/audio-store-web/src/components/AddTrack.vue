@@ -56,7 +56,7 @@ export default {
       });
       this.loading = false;
       this.$router.push({
-        name: 'Tracks',
+        name: 'Playlist',
         params: {
           id: this.playlistId,
         },
