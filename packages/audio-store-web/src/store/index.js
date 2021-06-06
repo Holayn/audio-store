@@ -15,6 +15,8 @@ import {
   updatePlaylist,
 } from '../services/playlist';
 
+import { isOffline } from '../services/audioFetcher';
+
 export default createStore({
   state: {
     currentTrack: {},
@@ -117,7 +119,17 @@ export default createStore({
       }
 
       if (currentTrackIndex != null && currentTrackIndex + 1 !== state.tracks.length) {
-        dispatch('loadCurrentTrack', state.tracks[currentTrackIndex + 1]);
+        const nextTrack = state.tracks[currentTrackIndex + 1];
+        if (await isOffline() && !nextTrack.loaded) {
+          for (let i = currentTrackIndex + 2; i < state.tracks.length; i += 1) {
+            if (state.tracks[i].loaded) {
+              dispatch('loadCurrentTrack', state.tracks[i]);
+              return;
+            }
+          }
+          return;
+        }
+        dispatch('loadCurrentTrack', nextTrack);
       }
     },
     async loadPrevTrackAsCurrent({ dispatch, state }) {
