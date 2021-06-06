@@ -9,6 +9,7 @@ import {
 } from '../services/track';
 import {
   createPlaylist,
+  deletePlaylist,
   getPlaylist,
   getPlaylists,
   updatePlaylist,
@@ -45,6 +46,9 @@ export default createStore({
     },
     newPlaylist(state, playlist) {
       state.playlists[playlist.id] = playlist;
+    },
+    deletePlaylist(state, playlistId) {
+      delete state.playlists[playlistId];
     },
   },
   actions: {
@@ -96,6 +100,10 @@ export default createStore({
     async addNewPlaylist({ commit }, playlistName) {
       const playlist = await createPlaylist(playlistName);
       commit('newPlaylist', playlist);
+    },
+    async deletePlaylist({ commit }, playlistId) {
+      await deletePlaylist(playlistId);
+      commit('deletePlaylist', playlistId);
     },
     clearTrack({ commit }) {
       commit('currentTrack', null);

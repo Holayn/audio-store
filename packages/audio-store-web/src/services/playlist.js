@@ -34,6 +34,7 @@ export async function updatePlaylist(playlist) {
   await database.put('playlists', playlist);
 }
 
-// export async function deletePlaylist() {
-
-// }
+export async function deletePlaylist(playlistId) {
+  const database = await db.getDb();
+  await database.delete('playlists', playlistId);
+}
