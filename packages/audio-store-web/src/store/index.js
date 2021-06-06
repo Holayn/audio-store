@@ -53,7 +53,7 @@ export default createStore({
       commit('playlists', playlists);
     },
     async getPlaylistTracks({ commit, dispatch, getters }, playlistId) {
-      if (!getters.playlists) {
+      if (!getters.playlists[playlistId]) {
         await dispatch('getPlaylists');
       }
       const tracks = await Promise.all(getters.playlists[playlistId].tracks

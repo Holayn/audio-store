@@ -32,7 +32,7 @@ export default {
   },
   computed: {
     title() {
-      if (!this.$store.getters.playlists) {
+      if (!this.$store.getters.playlists[this.id]) {
         return null;
       }
       return this.$store.getters.playlists[this.id].title;
