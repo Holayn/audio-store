@@ -15,6 +15,12 @@
       class="w-16 h-1/2 mt-4 flex items-center justify-center rounded-md bg-black text-white">
       load
     </button>
+    <div v-if="loading" class="flex justify-center pt-16">
+      <div
+        class="animate-spin rounded-full border-2 border-t-2 border-gray-200 h-8 w-8"
+        style="border-top-color: black;"
+      ></div>
+    </div>
   </div>
 </template>
 
@@ -25,6 +31,7 @@ export default {
     return {
       urlToLoad: '',
       playlistId: null,
+      loading: false,
     };
   },
   props: {
@@ -42,9 +49,17 @@ export default {
   },
   methods: {
     async loadTrack() {
-      this.$store.dispatch('addNewTrack', {
+      this.loading = true;
+      await this.$store.dispatch('addNewTrack', {
         url: this.urlToLoad,
         playlistId: this.playlistId,
+      });
+      this.loading = false;
+      this.$router.push({
+        name: 'Tracks',
+        params: {
+          id: this.playlistId,
+        },
       });
     },
   },
