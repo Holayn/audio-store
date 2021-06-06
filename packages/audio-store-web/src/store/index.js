@@ -17,7 +17,7 @@ import {
 export default createStore({
   state: {
     currentTrack: {},
-    playlists: null,
+    playlists: {},
     tracks: [],
     currentPlaylistId: null,
   },
@@ -35,7 +35,6 @@ export default createStore({
           return;
         }
       }
-
       state.tracks.push(track);
     },
     updatePlaylist(state, playlist) {
@@ -52,7 +51,6 @@ export default createStore({
     async getPlaylists({ commit }) {
       const playlists = await getPlaylists();
       commit('playlists', playlists);
-      // commit('tracks', tracks);
     },
     async getPlaylistTracks({ commit, dispatch, getters }, playlistId) {
       if (!getters.playlists) {
@@ -88,14 +86,12 @@ export default createStore({
     },
     async addNewTrack({ commit }, { url, playlistId }) {
       const track = await createNewTrack(url);
-      // if (!track) return;
       if (playlistId) {
         const playlist = await getPlaylist(playlistId);
         playlist.tracks.push(track.id);
         await updatePlaylist(playlist);
         commit('updatePlaylist', playlist);
       }
-      // commit('track', track);
     },
     async addNewPlaylist({ commit }, playlistName) {
       const playlist = await createPlaylist(playlistName);
@@ -115,6 +111,16 @@ export default createStore({
       if (currentTrackIndex != null && currentTrackIndex + 1 !== state.tracks.length) {
         dispatch('loadCurrentTrack', state.tracks[currentTrackIndex + 1]);
       }
+    },
+    async removeTrackFromPlaylist({ commit, dispatch, getters }, { playlistId, trackId }) {
+      const playlist = getters.playlists[playlistId];
+      const newPlaylist = {
+        ...playlist,
+        tracks: playlist.tracks.filter((playlistTrackId) => playlistTrackId !== trackId),
+      };
+      await updatePlaylist(newPlaylist);
+      commit('updatePlaylist', newPlaylist);
+      dispatch('getPlaylistTracks', playlistId);
     },
   },
   getters: {

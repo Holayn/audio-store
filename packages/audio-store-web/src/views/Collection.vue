@@ -39,6 +39,9 @@ export default {
       newPlaylistName: null,
     };
   },
+  async created() {
+    this.$store.dispatch('getPlaylists');
+  },
   computed: {
     playlists() {
       return Object.keys(this.$store.getters.playlists)

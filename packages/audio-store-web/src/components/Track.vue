@@ -58,7 +58,7 @@ export default {
     },
     remove() {
       this.toggleMenu();
-      this.$store.dispatch('removeTrack', this.track);
+      this.$emit('remove', this.track);
     },
     info() {
       alert(`

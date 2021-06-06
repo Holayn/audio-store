@@ -3,7 +3,12 @@
     <div class="text-2xl">{{title}}</div>
     <div class="flex items-start justify-center overflow-y-auto">
       <div class="justify-center max-w-full">
-        <Track v-for="track in tracks" :key="track.id" :track="track" @trackLoaded="trackLoaded()"/>
+        <Track
+          v-for="track in tracks"
+          :key="track.id"
+          :track="track"
+          @trackLoaded="trackLoaded()"
+          @remove="removeTrack(track.id)"/>
       </div>
     </div>
   </div>
@@ -37,6 +42,14 @@ export default {
     },
   },
   methods: {
+    removeTrack(trackId) {
+      if (this.id) {
+        this.$store.dispatch('removeTrackFromPlaylist', {
+          playlistId: this.id,
+          trackId,
+        });
+      }
+    },
     trackFailed(failedTrack) {
       const track = this.tracks.find((t) => t.id === failedTrack.id);
       track.loaded = false;
