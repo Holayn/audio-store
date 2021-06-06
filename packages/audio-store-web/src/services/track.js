@@ -62,7 +62,7 @@ export async function createNewTrack(url) {
 
   const track = {
     title: `${title}`,
-    loaded: false,
+    loaded: true,
     dateAdded: Date.now(),
     size: audioBlob.size,
     url,
