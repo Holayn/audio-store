@@ -144,11 +144,14 @@ export default createStore({
         dispatch('loadCurrentTrack', state.tracks[currentTrackIndex - 1]);
       }
     },
-    async removeTrackFromPlaylist({ commit, dispatch, getters }, { playlistId, trackId }) {
+    async removeTrackFromPlaylist({ commit, dispatch, getters }, { playlistId, trackIndex }) {
       const playlist = getters.playlists[playlistId];
       const newPlaylist = {
         ...playlist,
-        tracks: playlist.tracks.filter((playlistTrackId) => playlistTrackId !== trackId),
+        tracks: [
+          ...playlist.tracks.slice(0, trackIndex),
+          ...playlist.tracks.slice(trackIndex + 1),
+        ],
       };
       await updatePlaylist(newPlaylist);
       commit('updatePlaylist', newPlaylist);

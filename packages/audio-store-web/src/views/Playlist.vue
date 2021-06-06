@@ -15,11 +15,11 @@
     <div class="flex items-start justify-center overflow-y-auto">
       <div class="justify-center max-w-full">
         <Track
-          v-for="track in tracks"
+          v-for="(track, index) in tracks"
           :key="track.id"
           :track="track"
           @trackLoaded="trackLoaded()"
-          @remove="removeTrack(track.id)"/>
+          @remove="removeTrack(index)"/>
       </div>
     </div>
   </div>
@@ -60,11 +60,11 @@ export default {
         this.$router.push({ name: 'Collection' });
       }
     },
-    removeTrack(trackId) {
+    removeTrack(trackIndex) {
       if (this.id) {
         this.$store.dispatch('removeTrackFromPlaylist', {
           playlistId: this.id,
-          trackId,
+          trackIndex,
         });
       }
     },
