@@ -120,6 +120,18 @@ export default createStore({
         dispatch('loadCurrentTrack', state.tracks[currentTrackIndex + 1]);
       }
     },
+    async loadPrevTrackAsCurrent({ dispatch, state }) {
+      let currentTrackIndex = null;
+      for (let i = 0; i < state.tracks.length; i += 1) {
+        if (state.tracks[i].id === state.currentTrack.id) {
+          currentTrackIndex = i;
+        }
+      }
+
+      if (currentTrackIndex != null && currentTrackIndex - 1 !== -1) {
+        dispatch('loadCurrentTrack', state.tracks[currentTrackIndex - 1]);
+      }
+    },
     async removeTrackFromPlaylist({ commit, dispatch, getters }, { playlistId, trackId }) {
       const playlist = getters.playlists[playlistId];
       const newPlaylist = {
