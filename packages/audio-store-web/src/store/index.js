@@ -7,17 +7,17 @@ import {
   loadTrackAudio,
   unloadTrackAudio,
 } from '../services/track';
+import {
+  createPlaylist,
+  getPlaylist,
+  getPlaylists,
+  updatePlaylist,
+} from '../services/playlist';
 
 export default createStore({
   state: {
     currentTrack: {},
-    playlists: {
-      1: {
-        id: 1,
-        tracks: [3, 1],
-        title: 'Test Playlist 1',
-      },
-    },
+    playlists: null,
     tracks: [],
     currentPlaylistId: null,
   },
@@ -38,18 +38,31 @@ export default createStore({
 
       state.tracks.push(track);
     },
+    updatePlaylist(state, playlist) {
+      state.playlists[playlist.id] = playlist;
+    },
+    playlists(state, playlists) {
+      state.playlists = playlists;
+    },
+    newPlaylist(state, playlist) {
+      state.playlists[playlist.id] = playlist;
+    },
   },
   actions: {
     async getPlaylists({ commit }) {
-      // const tracks = await getPlaylists();
+      const playlists = await getPlaylists();
+      commit('playlists', playlists);
       // commit('tracks', tracks);
     },
-    async getPlaylistTracks({ commit, getters }, playlistId) {
+    async getPlaylistTracks({ commit, dispatch, getters }, playlistId) {
+      if (!getters.playlists) {
+        await dispatch('getPlaylists');
+      }
       const tracks = await Promise.all(getters.playlists[playlistId].tracks
         .map((trackId) => getTrack(trackId)));
       commit('tracks', tracks);
     },
-    async getTracks({ commit }) {
+    async getAllTracks({ commit }) {
       const tracks = await getAllTracks();
       commit('tracks', tracks);
     },
@@ -73,10 +86,20 @@ export default createStore({
 
       commit('track', updatedTrack);
     },
-    async addNewTrack({ commit }, url) {
+    async addNewTrack({ commit }, { url, playlistId }) {
       const track = await createNewTrack(url);
-      if (!track) return;
-      commit('track', track);
+      // if (!track) return;
+      if (playlistId) {
+        const playlist = await getPlaylist(playlistId);
+        playlist.tracks.push(track.id);
+        await updatePlaylist(playlist);
+        commit('updatePlaylist', playlist);
+      }
+      // commit('track', track);
+    },
+    async addNewPlaylist({ commit }, playlistName) {
+      const playlist = await createPlaylist(playlistName);
+      commit('newPlaylist', playlist);
     },
     clearTrack({ commit }) {
       commit('currentTrack', null);

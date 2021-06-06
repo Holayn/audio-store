@@ -15,31 +15,13 @@ window.dbReset = async () => {
         keyPath: 'id',
         autoIncrement: true,
       });
+
+      database.createObjectStore('playlists', {
+        keyPath: 'id',
+        autoIncrement: true,
+      });
     },
   });
-
-  // // populate db with tracks. this should come from a database
-  // await newDB.add('tracks', {
-  //   title: 'track1',
-  //   url: 'http://youtube.com',
-  //   audioId: null,
-  //   loaded: false,
-  //   dateAdded: Date.now(),
-  // });
-  // await newDB.add('tracks', {
-  //   title: 'track2',
-  //   url: 'http://youtube.com',
-  //   audioId: null,
-  //   loaded: false,
-  //   dateAdded: Date.now(),
-  // });
-  // await newDB.add('tracks', {
-  //   title: 'track3',
-  //   url: 'http://youtube.com',
-  //   audioId: null,
-  //   loaded: false,
-  //   dateAdded: Date.now(),
-  // });
 
   // TODO: remove
   window.db = newDB;
@@ -50,6 +32,19 @@ window.dbReset = async () => {
 class DB {
   constructor() {
     this.db = this.init();
+  }
+
+  async reset() {
+    const keys = await this.getDb().getAllKeys('tracks');
+    const tracks = await Promise.all(keys.map(async (key) => {
+      const track = await this.getDb().get('tracks', key);
+
+      return track;
+    }));
+    await deleteDB('audioFiles');
+    await this.init();
+    await Promise.all(tracks.map(async (track) => this.getDb().add('tracks', track)));
+    console.log('reset complete');
   }
 
   getDb() {
@@ -81,7 +76,7 @@ class DB {
     this.db = newDB;
 
     // TODO: remove
-    window.db = newDB;
+    window.db = this;
 
     return newDB;
   }

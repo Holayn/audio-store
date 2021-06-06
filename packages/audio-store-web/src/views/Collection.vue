@@ -8,8 +8,20 @@
       v-for="playlist in playlists"
       @click="viewPlaylist(playlist)"
       :key="playlist.id"
-      :playlist="playlist"
       :title="playlist.title"/>
+    <div class="flex p-2">
+      <div class="flex flex-auto ml-4 justify-start">
+        <svg @click="viewCreatePlaylist()" class="cursor-pointer" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+      </div>
+    </div>
+    <div v-if="showCreatePlaylist">
+      <input v-model="newPlaylistName" class="mr-2 border text-gray-900" placeholder="name">
+      <button
+        @click="addNewPlaylist()"
+        class="w-16 h-1/2 rounded-md bg-black text-white">
+        add
+      </button>
+    </div>
   </div>
 </template>
 
@@ -23,19 +35,27 @@ export default {
   },
   data() {
     return {
+      showCreatePlaylist: false,
+      newPlaylistName: null,
     };
-  },
-  async created() {
-    this.$store.dispatch('getPlaylists');
   },
   computed: {
     playlists() {
-      return this.$store.getters.playlists;
+      return Object.keys(this.$store.getters.playlists)
+        .map((playlistId) => this.$store.getters.playlists[playlistId]);
     },
   },
   methods: {
     viewPlaylist(playlist) {
-      this.$router.push({ name: 'Tracks', params: { id: 1 } });
+      this.$router.push({ name: 'Tracks', params: { id: playlist.id } });
+    },
+    viewCreatePlaylist() {
+      this.showCreatePlaylist = !this.showCreatePlaylist;
+    },
+    addNewPlaylist() {
+      this.$store.dispatch('addNewPlaylist', this.newPlaylistName);
+      this.newPlaylistName = null;
+      this.showCreatePlaylist = false;
     },
   },
 };

@@ -40,14 +40,18 @@ export async function createNewTrack(url) {
     const track = await database.get('tracks', key);
 
     if (track.videoId === videoId) {
-      return false;
+      return track;
     }
 
-    return true;
-  }));
-  if (res.includes(false)) {
-    alert('track already exists');
     return null;
+  }));
+
+  for (let i = 0; i < res.length; i += 1) {
+    const track = res[i];
+    if (track != null) {
+      console.log('track already exists');
+      return track;
+    }
   }
 
   const audioBlob = await fetchTrack(url);
