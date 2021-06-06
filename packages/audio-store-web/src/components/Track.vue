@@ -62,7 +62,7 @@ export default {
     },
     info() {
       alert(`
-        date added: ${this.track.dateAdded}
+        date added: ${new Date(this.track.dateAdded)}
         size: ${(this.track.size ? this.track.size : 0) / 1000000} mb
         url: ${this.track.url}
       `);
