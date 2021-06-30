@@ -1,10 +1,7 @@
-const AUDIO_FETCH_BASE_URL = 'http://192.168.0.133:8000';
-const AUDIO_FETCH_AUDIO_API_PATH = '/download';
-const AUDIO_FETCH_AUDIO_INFO_PATH = '/trackinfo';
-const AUDIO_FETCH_TEST_PATH = '/test';
+import { AUDIO_FETCH_BASE_URL } from '../globals';
 
 export async function isOffline() {
-  const res = await fetch(`${AUDIO_FETCH_BASE_URL}${AUDIO_FETCH_TEST_PATH}`).catch(() => false);
+  const res = await fetch(`${AUDIO_FETCH_BASE_URL}/test`).catch(() => false);
   if (res === false || res.status !== 200) {
     return true;
   }
@@ -17,7 +14,7 @@ export async function fetchInfo(url) {
     throw new Error();
   }
 
-  const apiUrl = `${AUDIO_FETCH_BASE_URL}${AUDIO_FETCH_AUDIO_INFO_PATH}?url=${url}`;
+  const apiUrl = `${AUDIO_FETCH_BASE_URL}/trackinfo?url=${url}`;
   return (await fetch(apiUrl).catch(() => {
     alert('something went wrong');
   })).json();
@@ -29,7 +26,7 @@ export async function fetchTrack(url) {
     throw new Error();
   }
 
-  const apiUrl = `${AUDIO_FETCH_BASE_URL}${AUDIO_FETCH_AUDIO_API_PATH}?url=${url}`;
+  const apiUrl = `${AUDIO_FETCH_BASE_URL}/download?url=${url}`;
 
   const audioBlob = await (await fetch(apiUrl).catch(() => {
     alert('something went wrong');

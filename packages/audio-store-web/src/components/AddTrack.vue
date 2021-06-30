@@ -16,17 +16,19 @@
       load
     </button>
     <div v-if="loading" class="flex justify-center pt-16">
-      <div
-        class="animate-spin rounded-full border-2 border-t-2 border-gray-200 h-8 w-8"
-        style="border-top-color: black;"
-      ></div>
+      <Loading/>
     </div>
   </div>
 </template>
 
 <script>
+import Loading from '@/components/Loading.vue';
+
 export default {
   name: 'AddTrack',
+  components: {
+    Loading,
+  },
   data() {
     return {
       urlToLoad: '',

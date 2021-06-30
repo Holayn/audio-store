@@ -31,7 +31,7 @@ export default {
   },
   methods: {
     openSettings() {
-      this.$router.push({ path: 'settings' });
+      this.$router.push({ name: 'Settings' });
     },
   },
 };
