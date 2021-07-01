@@ -1,9 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import AllTracks from '../views/AllTracks.vue';
 import Collection from '../views/Collection.vue';
 import CollectionView from '../views/CollectionView.vue';
-import Settings from '../views/Settings.vue';
-import Playlist from '../views/Playlist.vue';
 import Load from '../views/Load.vue';
+import Playlist from '../views/Playlist.vue';
+import Settings from '../views/Settings.vue';
 
 const routes = [
   {
@@ -26,6 +27,11 @@ const routes = [
         name: 'Playlist',
         component: Playlist,
         props: true,
+      },
+      {
+        path: 'all-tracks',
+        name: 'AllTracks',
+        component: AllTracks,
       },
     ],
   },

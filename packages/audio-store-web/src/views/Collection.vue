@@ -1,6 +1,6 @@
 <template>
   <div>
-    <MenuItem title="All Tracks"/>
+    <MenuItem title="All Tracks" @click="viewAllTracks()"/>
     <div class="flex ml-4 pt-4 text-3xl">
       Playlists
     </div>
@@ -49,6 +49,9 @@ export default {
     },
   },
   methods: {
+    viewAllTracks() {
+      this.$router.push({ name: 'AllTracks' });
+    },
     viewPlaylist(playlist) {
       this.$router.push({ name: 'Playlist', params: { id: playlist.id } });
     },
