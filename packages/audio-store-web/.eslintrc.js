@@ -16,5 +16,6 @@ module.exports = {
     'no-unused-vars': 'warn',
     'class-methods-use-this': 'off',
     'import/prefer-default-export': 'off',
+    'max-len': 'off',
   },
 };
