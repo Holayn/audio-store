@@ -9,14 +9,14 @@
         <div class="flex flex-col flex-auto justify-end">
           <div>
             <div class="text-gray-400">Track</div>
-            <div>Poop</div>
+            <div>{{track.title}}</div>
           </div>
           <div>
             <div class="text-gray-400">Playlist</div>
-            <div>Poop</div>
+            <div>{{playlist.title}}</div>
           </div>
         </div>
-        <div class="flex flex-col flex-auto justify-center">
+        <div class="flex flex-col flex-auto justify-center font-sm italic">
           <div>Double tap to pause/play</div>
           <div>Swipe right for next</div>
           <div>Swipe down for restart</div>
@@ -35,9 +35,11 @@ export default {
     return {
     };
   },
-  props: {
-  },
+  props: ['track'],
   computed: {
+    playlist() {
+      return this.$store.getters.currentPlaylist;
+    },
   },
   methods: {
     togglePlay() {

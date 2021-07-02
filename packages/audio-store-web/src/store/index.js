@@ -52,6 +52,9 @@ export default createStore({
     deletePlaylist(state, playlistId) {
       delete state.playlists[playlistId];
     },
+    currentPlaylistId(state, currentPlaylistId) {
+      state.currentPlaylistId = currentPlaylistId;
+    },
   },
   actions: {
     async getPlaylists({ commit }) {
@@ -64,6 +67,7 @@ export default createStore({
       }
       const tracks = await Promise.all(getters.playlists[playlistId].tracks
         .map((trackId) => getTrack(trackId)));
+      commit('currentPlaylistId', playlistId);
       commit('tracks', tracks);
     },
     async getAllTracks({ commit }) {
@@ -168,6 +172,12 @@ export default createStore({
     },
     tracks(state) {
       return state.tracks;
+    },
+    currentPlaylist(state) {
+      if (state.currentPlaylistId) {
+        return state.playlists[state.currentPlaylistId];
+      }
+      return null;
     },
   },
   modules: {

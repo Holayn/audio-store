@@ -10,6 +10,7 @@
         @previous="prev()"
         @next="next()"
         @restart="restart()"
+        :track="track"
       />
     </div>
     <div class="flex items-center justify-center bg-gray-900">
