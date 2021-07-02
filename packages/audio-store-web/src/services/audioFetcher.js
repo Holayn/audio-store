@@ -1,11 +1,17 @@
 import { AUDIO_FETCH_BASE_URL } from '../globals';
 
+let offline = null;
+
 export async function isOffline() {
-  const res = await fetch(`${AUDIO_FETCH_BASE_URL}/test`).catch(() => false);
-  if (res === false || res.status !== 200) {
-    return true;
+  if (offline === null) {
+    const res = await fetch(`${AUDIO_FETCH_BASE_URL}/test`).catch(() => false);
+    if (res === false || res.status !== 200) {
+      offline = true;
+    }
+    offline = false;
   }
-  return false;
+
+  return offline;
 }
 
 export async function fetchInfo(url) {

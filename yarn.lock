@@ -7768,6 +7768,11 @@ to-regex@^3.0.1, to-regex@^3.0.2:
     regex-not "^1.0.2"
     safe-regex "^1.1.0"
 
+tocca@^2.0.9:
+  version "2.0.9"
+  resolved "https://registry.yarnpkg.com/tocca/-/tocca-2.0.9.tgz#3a8b6c22e2e72a86c44d7f0864554cbc936eb965"
+  integrity sha512-FXofUGAFcgEIEOS3m9Dk9URaY3x+JeerPfVFc8K820PjV0JcCsH98BFxrVOTANC8YvM4QTrmKMol2/818gFmCw==
+
 toidentifier@1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/toidentifier/-/toidentifier-1.0.0.tgz#7e1be3470f1e77948bc43d94a3c8f4d7752ba553"

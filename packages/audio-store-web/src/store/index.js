@@ -120,7 +120,8 @@ export default createStore({
 
       if (currentTrackIndex != null && currentTrackIndex + 1 !== state.tracks.length) {
         const nextTrack = state.tracks[currentTrackIndex + 1];
-        if (await isOffline() && !nextTrack.loaded) {
+        // if we're offline and the next track isn't loaded, try finding a track that is loaded
+        if (!nextTrack.loaded && await isOffline()) {
           for (let i = currentTrackIndex + 2; i < state.tracks.length; i += 1) {
             if (state.tracks[i].loaded) {
               dispatch('loadCurrentTrack', state.tracks[i]);
