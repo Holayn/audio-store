@@ -26,6 +26,7 @@ export default createStore({
   },
   mutations: {
     currentTrack(state, track) {
+      window.document.title = track.title;
       state.currentTrack = track;
     },
     tracks(state, tracks) {
