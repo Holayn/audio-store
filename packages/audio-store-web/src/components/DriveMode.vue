@@ -9,6 +9,7 @@
         <div class="flex flex-col flex-auto justify-end">
           <div>
             <div class="text-gray-400">Track</div>
+            <div v-if="!track.title">---</div>
             <div>{{track.title}}</div>
           </div>
           <div>
