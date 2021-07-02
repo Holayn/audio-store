@@ -11,7 +11,11 @@ class DB {
   }
 
   async delete() {
-    await deleteDB('audioFiles');
+    await deleteDB('audioFiles', {
+      blocked() {
+        window.location.reload();
+      },
+    });
   }
 
   async init() {

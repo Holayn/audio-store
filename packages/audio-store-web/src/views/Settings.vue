@@ -77,7 +77,6 @@ export default {
     },
     async reset() {
       await db.delete();
-      window.location.reload();
     },
   },
 };
