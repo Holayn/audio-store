@@ -54,17 +54,17 @@ export async function createNewTrack(url) {
     }
   }
 
-  const audioBlob = await fetchTrack(url);
+  const audioArrayBuffer = await fetchTrack(url);
 
   const audioId = await database.add('audio', {
-    data: audioBlob,
+    data: audioArrayBuffer,
   });
 
   const track = {
     title: `${title}`,
     loaded: true,
     dateAdded: Date.now(),
-    size: audioBlob.size,
+    size: audioArrayBuffer.byteLength,
     url,
     audioId,
     videoId,
