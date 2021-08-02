@@ -63,6 +63,9 @@ router.get('/download', async (req, res) => {
   const audioFileName = await downloader.download(req.query.url);
   res.sendFile(audioFileName, {
     root: path.join(__dirname, '../'),
+    headers: {
+      'Content-Type': 'audio/mp3',
+    },
   });
 });
 

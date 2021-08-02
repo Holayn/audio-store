@@ -1,6 +1,7 @@
 const fs = require('fs');
 const ytdl = require('ytdl-core');
 const sanitize = require("sanitize-filename");
+const ffmpeg = require('fluent-ffmpeg');
 
 const AUDIO_FILES_DIRECTORY = 'audio-files';
 
@@ -31,7 +32,12 @@ const download = async (url) => {
 
     const filename = `${AUDIO_FILES_DIRECTORY}/[[[${videoId}]]] - ${sanitize(title)}.mp3`;
 
-    stream.on('end', () => {
+    const proc = ffmpeg({
+      source: stream,
+    });
+    proc.save(filename);
+    proc.on('end', () => {
+      console.log('done');
       Object.assign(library, {
         [videoId]: {
           filename,
@@ -41,8 +47,9 @@ const download = async (url) => {
       fs.writeFileSync('library.json', JSON.stringify(library));
       res(filename);
     });
-
-    stream.pipe(fs.createWriteStream(filename));
+    proc.on('error', (err) => {
+      console.log(`err: ${err.message}`);
+    });
   });
 }
 
