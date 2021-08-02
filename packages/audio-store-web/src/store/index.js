@@ -15,8 +15,6 @@ import {
   updatePlaylist,
 } from '../services/playlist';
 
-import { isOffline } from '../services/audioFetcher';
-
 export default createStore({
   state: {
     currentTrack: {},
@@ -75,17 +73,16 @@ export default createStore({
       const tracks = await getAllTracks();
       commit('tracks', tracks);
     },
-    async loadCurrentTrack({ commit }, track) {
-      if (!track.loaded) {
-        const updatedTrack = await loadTrackAudio(track);
-        if (!updatedTrack) {
-          return;
-        }
-        commit('currentTrack', updatedTrack);
-        commit('track', updatedTrack);
-      } else {
-        commit('currentTrack', track);
+    async loadTrack({ commit }, track) {
+      const updatedTrack = await loadTrackAudio(track);
+      if (!updatedTrack) {
+        alert('something went wrong loading the audio');
+        return;
       }
+      commit('track', updatedTrack);
+    },
+    loadCurrentTrack({ commit }, track) {
+      commit('currentTrack', track);
     },
     async unloadTrack({ commit }, track) {
       const updatedTrack = await unloadTrackAudio(track);
@@ -124,18 +121,12 @@ export default createStore({
       }
 
       if (currentTrackIndex != null && currentTrackIndex + 1 !== state.tracks.length) {
-        const nextTrack = state.tracks[currentTrackIndex + 1];
-        // if we're offline and the next track isn't loaded, try finding a track that is loaded
-        if (!nextTrack.loaded && await isOffline()) {
-          for (let i = currentTrackIndex + 2; i < state.tracks.length; i += 1) {
-            if (state.tracks[i].loaded) {
-              dispatch('loadCurrentTrack', state.tracks[i]);
-              return;
-            }
+        for (let i = currentTrackIndex + 1; i < state.tracks.length; i += 1) {
+          if (state.tracks[i].loaded) {
+            dispatch('loadCurrentTrack', state.tracks[i]);
+            return;
           }
-          return;
         }
-        dispatch('loadCurrentTrack', nextTrack);
       }
     },
     async loadPrevTrackAsCurrent({ dispatch, state }) {
@@ -147,7 +138,12 @@ export default createStore({
       }
 
       if (currentTrackIndex != null && currentTrackIndex - 1 !== -1) {
-        dispatch('loadCurrentTrack', state.tracks[currentTrackIndex - 1]);
+        for (let i = currentTrackIndex - 1; i >= 0; i -= 1) {
+          if (state.tracks[i].loaded) {
+            dispatch('loadCurrentTrack', state.tracks[i]);
+            return;
+          }
+        }
       }
     },
     async removeTrackFromPlaylist({ commit, dispatch, getters }, { playlistId, trackIndex }) {
@@ -179,6 +175,9 @@ export default createStore({
         return state.playlists[state.currentPlaylistId];
       }
       return null;
+    },
+    currentTrackLoaded(state) {
+      return Object.keys(state.currentTrack).length > 0;
     },
   },
   modules: {

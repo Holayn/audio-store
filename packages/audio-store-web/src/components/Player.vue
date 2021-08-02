@@ -13,16 +13,17 @@
         :track="track"
       />
     </div>
-    <div class="flex items-center justify-center bg-gray-900">
-      <div>
-        <svg @click="prev()" class="cursor-pointer" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="19 20 9 12 19 4 19 20"></polygon><line x1="5" y1="19" x2="5" y2="5"></line></svg>
-      </div>
-      <audio ref="audio-elem" @ended="onEnd()" autoplay controls>
-        <source v-if="audioData" :src="audioUrl" type="audio/mpeg">
-      </audio>
-      <div>
-        <svg @click="next()" class="cursor-pointer" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 4 15 12 5 20 5 4"></polygon><line x1="19" y1="5" x2="19" y2="19"></line></svg>
-      </div>
+    <div class="flex items-center justify-center bg-gray-900 py-4">
+      <PlayerButton @click="prev()" class="mx-1">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="19 20 9 12 19 4 19 20"></polygon><line x1="5" y1="19" x2="5" y2="5"></line></svg>
+      </PlayerButton>
+      <PlayerButton @click="togglePlay()" class="mx-1">
+        <svg v-if="!this.isPlaying" class="relative" style="left: 2px;" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+        <svg v-else xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+      </PlayerButton>
+      <PlayerButton @click="next()" class="mx-1">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 4 15 12 5 20 5 4"></polygon><line x1="19" y1="5" x2="19" y2="19"></line></svg>
+      </PlayerButton>
     </div>
   </div>
 </template>
@@ -30,11 +31,19 @@
 <script>
 import db from '@/services/db';
 import DriveMode from '@/components/DriveMode.vue';
+import PlayerButton from '@/components/PlayerButton.vue';
+import {
+  play,
+  pause,
+  resume,
+  stop,
+} from '@/services/player';
 
 export default {
   name: 'Player',
   components: {
     DriveMode,
+    PlayerButton,
   },
   data() {
     return {
@@ -60,12 +69,6 @@ export default {
     track() {
       return this.$store.getters.currentTrack;
     },
-    audioUrl() {
-      if (this.audioData) {
-        return URL.createObjectURL(this.audioData);
-      }
-      return null;
-    },
   },
   watch: {
     track(track) {
@@ -76,31 +79,34 @@ export default {
     driveMode() {
       this.isDriveMode = !this.isDriveMode;
     },
-    async loadTrack(track) {
-      if (!track) {
+    async loadTrack() {
+      if (!this.track) {
         return;
       }
 
       try {
-        const { data: audioData } = await db.getDb().get('audio', this.track.audioId);
-
-        if (this.audioData) {
-          this.audioData = audioData;
-          this.$refs['audio-elem'].load();
-        } else {
-          this.audioData = audioData;
-        }
+        play(this.track);
 
         this.isPlaying = true;
       } catch (e) {
         this.$store.dispatch('clearTrack');
-        this.$emit('track-fail', track);
+        this.$emit('track-fail', this.track);
+      }
+    },
+    togglePlay() {
+      if (!this.track || !this.$store.getters.currentTrackLoaded) {
+        return;
+      }
+
+      if (this.isPlaying) {
+        this.isPlaying = false;
+        pause();
+      } else {
+        this.isPlaying = true;
+        resume();
       }
     },
     next() {
-      this.$store.dispatch('loadNextTrackAsCurrent');
-    },
-    onEnd() {
       this.$store.dispatch('loadNextTrackAsCurrent');
     },
     prev() {
@@ -108,15 +114,6 @@ export default {
     },
     restart() {
       console.log('not implemented yet');
-    },
-    togglePlay() {
-      if (this.isPlaying) {
-        this.$refs['audio-elem'].pause();
-      } else {
-        this.$refs['audio-elem'].play();
-      }
-
-      this.isPlaying = !this.isPlaying;
     },
   },
 };

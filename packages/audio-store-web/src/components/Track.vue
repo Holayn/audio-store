@@ -6,7 +6,8 @@
       @click="loadTrack()"
       style="height: 3rem; width: 3rem; min-width: 3rem;"
       class="mr-4 flex items-center justify-center rounded-full bg-black text-white">
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+      <svg v-if="!this.track.loaded" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 15v4c0 1.1.9 2 2 2h14a2 2 0 0 0 2-2v-4M17 9l-5 5-5-5M12 12.8V2.5"/></svg>
+      <svg v-else xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
     </button>
     <div class="flex-auto mr-1 max-h-12 overflow-auto">
       {{this.track.title}}
@@ -40,17 +41,25 @@
 </template>
 
 <script>
+import db from '@/services/db';
+import { play } from '@/services/player';
+
 export default {
   name: 'Track',
   data() {
     return {
       showMenu: false,
+      audioArrayBuffer: null,
     };
   },
   props: ['track'],
   methods: {
-    loadTrack() {
-      this.$store.dispatch('loadCurrentTrack', this.track);
+    async loadTrack() {
+      if (this.track.loaded) {
+        await this.$store.dispatch('loadCurrentTrack', this.track);
+      } else {
+        await this.$store.dispatch('loadTrack', this.track);
+      }
     },
     unload() {
       this.toggleMenu();

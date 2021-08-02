@@ -79,22 +79,22 @@ export async function createNewTrack(url) {
 }
 
 export async function loadTrackAudio(track) {
-  const audioBlob = await fetchTrack(track.url);
+  const audioArrayBuffer = await fetchTrack(track.url);
 
-  if (!audioBlob) {
+  if (!audioArrayBuffer) {
     return null;
   }
 
   const database = await db.getDb();
   const audioId = await database.add('audio', {
-    data: audioBlob,
+    data: audioArrayBuffer,
   });
 
   const updatedTrack = {
     ...track,
     loaded: true,
     audioId,
-    size: audioBlob.size,
+    size: audioArrayBuffer.byteLength,
   };
 
   await database.put('tracks', updatedTrack);

@@ -34,10 +34,10 @@ export async function fetchTrack(url) {
 
   const apiUrl = `${AUDIO_FETCH_BASE_URL}/download?url=${url}`;
 
-  const audioBlob = await (await fetch(apiUrl).catch(() => {
+  const buffer = await (await fetch(apiUrl).catch(() => {
     alert('something went wrong');
     throw new Error();
-  })).blob();
+  })).arrayBuffer();
 
-  return audioBlob;
+  return buffer;
 }
