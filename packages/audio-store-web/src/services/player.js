@@ -18,13 +18,10 @@ export function stop() {
 function playAudioId(db, track, curr, end) {
   const audioId = track.audioIds[curr];
   const theDb = db;
+  source = context.createBufferSource();
   theDb.transaction(['audio']).objectStore('audio').get(audioId).onsuccess = (e) => {
     const audioArrayBuffer = e.target.result.data;
-    if (source) {
-      source = null;
-    }
     if (nextBuffer) {
-      source = context.createBufferSource();
       source.buffer = nextBuffer;
       source.connect(context.destination);
       source.start();
@@ -49,7 +46,6 @@ function playAudioId(db, track, curr, end) {
       };
     } else {
       context.decodeAudioData(audioArrayBuffer, (buffer) => {
-        source = context.createBufferSource();
         source.buffer = buffer;
         source.connect(context.destination);
         source.start();
@@ -82,15 +78,14 @@ export async function play(track) {
   if (source) {
     stop();
   }
-  // Can't use await syntax on iOS because https://developer.chrome.com/blog/new-in-chrome-72/#user-activation
-  // User action not passed through await / Promises
+  // have to construct source out here - user action not passed into callback
+  source = context.createBufferSource();
   const request = indexedDB.open('audioFiles');
   request.onsuccess = (event) => {
     const db2 = event.target.result;
     if (track.hasParts) {
       playAudioId(db2, track, 0, track.audioIds.length);
     } else {
-      source = context.createBufferSource();
       db2.transaction(['audio']).objectStore('audio').get(track.audioId).onsuccess = (e) => {
         const audioArrayBuffer = e.target.result.data;
         context.decodeAudioData(audioArrayBuffer, (buffer) => {
