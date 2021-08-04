@@ -19,37 +19,37 @@ function playAudioId(db, track, curr, end) {
   const audioId = track.audioIds[curr];
   const theDb = db;
   source = context.createBufferSource();
-  theDb.transaction(['audio']).objectStore('audio').get(audioId).onsuccess = (e) => {
-    const audioArrayBuffer = e.target.result.data;
-    if (nextBuffer) {
-      source.buffer = nextBuffer;
-      source.connect(context.destination);
-      source.start();
-      // start decoding next part, store and use buffer.
-      // this ensures there's no pause/hiccup when playing the next part.
-      if (curr + 1 !== end) {
-        const nextAudioId = track.audioIds[curr + 1];
-        theDb.transaction(['audio']).objectStore('audio').get(nextAudioId).onsuccess = (ev) => {
-          const nextAudioArrayBuffer = ev.target.result.data;
-          context.decodeAudioData(nextAudioArrayBuffer, (bufferNext) => {
-            nextBuffer = bufferNext;
-          });
-        };
-      }
-      source.onended = function () {
-        if (curr + 1 === end) {
-          theDb.close();
-          store.dispatch('loadNextTrackAsCurrent');
-        } else {
-          playAudioId(theDb, track, curr + 1, end);
-        }
+  if (nextBuffer) {
+    source.buffer = nextBuffer;
+    source.connect(context.destination);
+    source.start();
+    if (curr + 1 !== end) {
+      const nextAudioId = track.audioIds[curr + 1];
+      theDb.transaction(['audio']).objectStore('audio').get(nextAudioId).onsuccess = (ev) => {
+        const nextAudioArrayBuffer = ev.target.result.data;
+        context.decodeAudioData(nextAudioArrayBuffer, (bufferNext) => {
+          nextBuffer = bufferNext;
+        });
       };
-    } else {
+    }
+    source.onended = function () {
+      if (curr + 1 === end) {
+        theDb.close();
+        nextBuffer = null;
+        store.dispatch('loadNextTrackAsCurrent');
+      } else {
+        playAudioId(theDb, track, curr + 1, end);
+      }
+    };
+  } else {
+    theDb.transaction(['audio']).objectStore('audio').get(audioId).onsuccess = (e) => {
+      const audioArrayBuffer = e.target.result.data;
       context.decodeAudioData(audioArrayBuffer, (buffer) => {
         source.buffer = buffer;
         source.connect(context.destination);
         source.start();
         // start decoding next part, store and use buffer
+        // this ensures there's no pause/hiccup when playing the next part.
         if (curr + 1 !== end) {
           const nextAudioId = track.audioIds[curr + 1];
           theDb.transaction(['audio']).objectStore('audio').get(nextAudioId).onsuccess = (ev) => {
@@ -70,8 +70,8 @@ function playAudioId(db, track, curr, end) {
       }, (err) => {
         alert(err.err);
       });
-    }
-  };
+    };
+  }
 }
 
 export async function play(track) {
