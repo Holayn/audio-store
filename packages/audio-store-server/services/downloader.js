@@ -41,10 +41,10 @@ const download = async (url) => {
     });
     proc.on('end', async () => {
       console.log('done');
-      // 10 minutes
+      // 4 minutes
       if (lengthSeconds > 600) {
-        // split into 5 minute chunks
-        const numParts = Math.ceil(lengthSeconds / 300);
+        // split into 2 minute chunks
+        const numParts = Math.ceil(lengthSeconds / 120);
         const partProc = ffmpeg(filename).outputOptions(['-f segment', '-segment_time 100', '-c copy']).output(`${AUDIO_FILES_DIRECTORY}/[[[${videoId}]]] - ${sanitize(title)} - [[[%03d]]].mp3`);
 
         partProc.run();
