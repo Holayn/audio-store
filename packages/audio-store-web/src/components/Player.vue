@@ -81,6 +81,7 @@ export default {
     },
     async loadTrack() {
       if (!this.track) {
+        this.isPlaying = false;
         return;
       }
 

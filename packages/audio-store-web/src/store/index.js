@@ -1,4 +1,5 @@
 import { createStore } from 'vuex';
+import { DOCUMENT_TITLE } from '../globals';
 
 import {
   createNewTrack,
@@ -24,7 +25,12 @@ export default createStore({
   },
   mutations: {
     currentTrack(state, track) {
-      window.document.title = track.title;
+      if (track) {
+        window.document.title = track.title;
+      } else {
+        window.document.title = DOCUMENT_TITLE;
+      }
+
       state.currentTrack = track;
     },
     tracks(state, tracks) {
@@ -128,6 +134,7 @@ export default createStore({
           }
         }
       }
+      dispatch('clearTrack');
     },
     async loadPrevTrackAsCurrent({ dispatch, state }) {
       let currentTrackIndex = null;
