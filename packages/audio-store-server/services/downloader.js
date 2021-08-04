@@ -14,17 +14,17 @@ if (!fs.existsSync('library.json')) {
 
 const getInfo = async (url) => {
   return ytdl.getBasicInfo(url);
-}
+};
 
 const download = async (url) => {
   const {videoDetails} = await ytdl.getBasicInfo(url);
-  const {title, videoId} = videoDetails;
+  const {title, videoId, lengthSeconds} = videoDetails;
 
   if (library[videoId]) {
-    return library[videoId].filename;
+    return library[videoId];
   }
 
-  return new Promise((res, rej) => {
+  return new Promise(async (res) => {
     const stream = ytdl(url, {
       quality: 'highestaudio',
       filter: 'audioonly',
@@ -36,22 +36,68 @@ const download = async (url) => {
       source: stream,
     });
     proc.save(filename);
-    proc.on('end', () => {
+    proc.on('error', (err) => {
+      console.log(`err: ${err.message}`);
+    });
+    proc.on('end', async () => {
       console.log('done');
-      Object.assign(library, {
-        [videoId]: {
-          filename,
+      // 10 minutes
+      if (lengthSeconds > 600) {
+        // split into 5 minute chunks
+        const numParts = Math.ceil(lengthSeconds / 300);
+        const partProc = ffmpeg(filename).outputOptions(['-f segment', '-segment_time 100', '-c copy']).output(`${AUDIO_FILES_DIRECTORY}/[[[${videoId}]]] - ${sanitize(title)} - [[[%03d]]].mp3`);
+
+        partProc.run();
+        await new Promise(
+          (partRes) => {
+            partProc.on('end', () => {
+              console.log('splitting done');
+              partRes();
+            });
+            partProc.on('error', (e) => {
+              console.log(e);
+            });
+          }
+        );
+
+        const parts = [];
+        for (let i = 0; i < numParts; i += 1) {
+          parts.push(`${AUDIO_FILES_DIRECTORY}/[[[${videoId}]]] - ${sanitize(title)} - [[[${getFileNum(i)}]]].mp3`);
         }
-      });
+
+        Object.assign(library, {
+          [videoId]: {
+            filename,
+            parts,
+          }
+        });
+
+        res({
+          filename,
+          parts,
+        });
+      } else {
+        Object.assign(library, {
+          [videoId]: {
+            filename,
+          }
+        });
+      }
+
 
       fs.writeFileSync('library.json', JSON.stringify(library));
       res(filename);
     });
-    proc.on('error', (err) => {
-      console.log(`err: ${err.message}`);
-    });
   });
-}
+};
+
+const getFileNum = (num) => {
+  let str = `${num}`;
+  while (str.length < 3) {
+    str = `0${str}`;
+  }
+  return str;
+};
 
 module.exports = {
   download,

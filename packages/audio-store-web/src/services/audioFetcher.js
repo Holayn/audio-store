@@ -26,6 +26,14 @@ export async function fetchInfo(url) {
   })).json();
 }
 
+export async function fetchPart(partFilename) {
+  const apiUrl = `${AUDIO_FETCH_BASE_URL}/download-part?part=${partFilename}`;
+  return (await fetch(apiUrl).catch(() => {
+    alert('something went wrong');
+    throw new Error();
+  })).arrayBuffer();
+}
+
 export async function fetchTrack(url) {
   if (await isOffline()) {
     alert('offline - cannot perform action');
@@ -34,10 +42,17 @@ export async function fetchTrack(url) {
 
   const apiUrl = `${AUDIO_FETCH_BASE_URL}/download?url=${url}`;
 
-  const buffer = await (await fetch(apiUrl).catch(() => {
+  const res = await fetch(apiUrl).catch(() => {
     alert('something went wrong');
     throw new Error();
-  })).arrayBuffer();
+  });
 
-  return buffer;
+  if (res.headers.get('Content-Type') === 'application/json; charset=utf-8') {
+    const { parts } = await res.json();
+    return {
+      parts: await Promise.all(parts.map((part) => fetchPart(part))),
+    };
+  }
+
+  return res.arrayBuffer();
 }

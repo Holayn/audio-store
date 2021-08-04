@@ -60,7 +60,31 @@ router.get('/download', async (req, res) => {
     return;
   }
 
-  const audioFileName = await downloader.download(req.query.url);
+  const {audioFileName, parts} = await downloader.download(req.query.url);
+
+  if (parts) {
+    res.send({
+      parts,
+    });
+  } else {
+    res.sendFile(audioFileName, {
+      root: path.join(__dirname, '../'),
+      headers: {
+        'Content-Type': 'audio/mp3',
+      },
+    });
+  }
+});
+
+router.get('/download-part', async (req, res) => {
+  if (!req.query.part) {
+    console.error('missing params');
+    res.sendStatus(400);
+    return;
+  }
+
+  const audioFileName = req.query.part;
+
   res.sendFile(audioFileName, {
     root: path.join(__dirname, '../'),
     headers: {

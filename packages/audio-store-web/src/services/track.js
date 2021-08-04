@@ -54,7 +54,42 @@ export async function createNewTrack(url) {
     }
   }
 
-  const audioArrayBuffer = await fetchTrack(url);
+  const result = await fetchTrack(url);
+
+  if (result.parts) {
+    const { parts } = result;
+
+    let totalSize = 0;
+
+    const audioIds = await Promise.all(parts.map(async (partBuffer) => {
+      const audioId = await database.add('audio', {
+        data: partBuffer,
+      });
+      totalSize += partBuffer.byteLength;
+
+      return audioId;
+    }));
+
+    const track = {
+      title: `${title}`,
+      loaded: true,
+      dateAdded: Date.now(),
+      size: totalSize,
+      url,
+      videoId,
+      hasParts: true,
+      audioIds,
+    };
+
+    const trackId = await database.put('tracks', track);
+
+    return {
+      id: trackId,
+      ...track,
+    };
+  }
+
+  const audioArrayBuffer = result;
 
   const audioId = await database.add('audio', {
     data: audioArrayBuffer,
@@ -79,7 +114,37 @@ export async function createNewTrack(url) {
 }
 
 export async function loadTrackAudio(track) {
-  const audioArrayBuffer = await fetchTrack(track.url);
+  const result = await fetchTrack(track.url);
+  if (result.parts) {
+    const { parts } = result;
+
+    const database = await db.getDb();
+
+    let totalSize = 0;
+
+    const audioIds = await Promise.all(parts.map(async (partBuffer) => {
+      const audioId = await database.add('audio', {
+        data: partBuffer,
+      });
+      totalSize += partBuffer.byteLength;
+
+      return audioId;
+    }));
+
+    const updatedTrack = {
+      ...track,
+      loaded: true,
+      hasParts: true,
+      audioIds,
+      size: totalSize,
+    };
+
+    await database.put('tracks', updatedTrack);
+
+    return updatedTrack;
+  }
+
+  const audioArrayBuffer = result;
 
   if (!audioArrayBuffer) {
     return null;
