@@ -1,28 +1,15 @@
 <template>
-  <div>
-    <div
-      @dbltap="togglePlay()"
-      @swipedown="restart()"
-      @swipeleft="previous()"
-      @swiperight="next()"
-      class="flex flex-col w-full">
-        <div class="flex flex-col flex-auto justify-end">
-          <div>
-            <div class="text-gray-400">Track</div>
-            <div v-if="!track.title">---</div>
-            <div>{{track.title}}</div>
-          </div>
-          <div>
-            <div class="text-gray-400">Playlist</div>
-            <div>{{playlist.title}}</div>
-          </div>
-        </div>
-        <div class="flex flex-col flex-auto justify-center font-sm italic">
-          <div>Double tap to pause/play</div>
-          <div>Swipe right for next</div>
-          <div>Swipe down for restart</div>
-          <div>Swipe left for previous</div>
-        </div>
+  <div @swipedown="exit()" class="flex flex-col">
+    <div class="grid grid-row-3 flex-auto">
+      <div @click="togglePlay()" class="flex items-center justify-center bg-gray-400">
+        play/pause
+      </div>
+      <div @click="next()" class="flex items-center justify-center bg-red-400">
+        next
+      </div>
+      <div @click="prev()" class="flex items-center justify-center">
+        prev
+      </div>
     </div>
   </div>
 </template>
@@ -43,6 +30,9 @@ export default {
     },
   },
   methods: {
+    exit() {
+      this.$emit('exit');
+    },
     togglePlay() {
       this.$emit('togglePlay');
     },
@@ -51,9 +41,6 @@ export default {
     },
     next() {
       this.$emit('next');
-    },
-    restart() {
-      this.$emit('restart');
     },
   },
 };
