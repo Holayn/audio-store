@@ -169,12 +169,18 @@ export async function loadTrackAudio(track) {
 
 export async function unloadTrackAudio(track) {
   const database = await db.getDb();
-  await database.delete('audio', track.audioId);
+  if (track.hasParts) {
+    await Promise.all(track.audioIds.map(async (audioId) => {
+      await database.delete('audio', audioId);
+    }));
+  } else {
+    await database.delete('audio', track.audioId);
+  }
 
   const updatedTrack = {
     ...track,
     loaded: false,
-    audioId: null,
+    audioIds: null,
     size: null,
   };
 
