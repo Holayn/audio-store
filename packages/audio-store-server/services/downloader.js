@@ -45,7 +45,7 @@ const download = async (url) => {
       if (lengthSeconds > 600) {
         // split into 2 minute chunks
         const numParts = Math.ceil(lengthSeconds / 120);
-        const partProc = ffmpeg(filename).outputOptions(['-f segment', '-segment_time 100', '-c copy']).output(`${AUDIO_FILES_DIRECTORY}/[[[${videoId}]]] - ${sanitize(title)} - [[[%03d]]].mp3`);
+        const partProc = ffmpeg(filename).outputOptions(['-f segment', '-segment_time 120', '-c copy']).output(`${AUDIO_FILES_DIRECTORY}/[[[${videoId}]]] - ${sanitize(title)} - [[[%03d]]].mp3`);
 
         partProc.run();
         await new Promise(
