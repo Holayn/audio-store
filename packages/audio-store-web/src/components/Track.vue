@@ -1,6 +1,6 @@
 <template>
 <div>
-  <div class="flex p-2 m-1 bg-gray-100 rounded-md" :class="{'bg-green-50': this.track.loaded}">
+  <div class="flex relative p-2 m-1 bg-gray-100 rounded-md" :class="{'bg-green-50': this.track.loaded}">
     <button
       type="button"
       @click="loadTrack()"
@@ -14,6 +14,9 @@
     </div>
     <div>
       <svg @click="toggleMenu()" class="cursor-pointer" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+    </div>
+    <div v-if="loading" class="flex absolute w-full h-3/4 items-center justify-center">
+      <Loading/>
     </div>
   </div>
   <div v-if="showMenu">
@@ -43,23 +46,30 @@
 <script>
 import db from '@/services/db';
 import { play } from '@/services/player';
+import Loading from '@/components/Loading.vue';
 
 export default {
   name: 'Track',
+  components: {
+    Loading,
+  },
   data() {
     return {
       showMenu: false,
       audioArrayBuffer: null,
+      loading: false,
     };
   },
   props: ['track'],
   methods: {
     async loadTrack() {
+      this.loading = true;
       if (this.track.loaded) {
         await this.$store.dispatch('loadCurrentTrack', this.track);
       } else {
         await this.$store.dispatch('loadTrack', this.track);
       }
+      this.loading = false;
     },
     unload() {
       this.toggleMenu();

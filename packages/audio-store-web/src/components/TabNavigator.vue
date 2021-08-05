@@ -29,6 +29,7 @@
 export default {
   name: 'TabNavigator',
   data() {
+    return {};
   },
   props: [],
   computed: {

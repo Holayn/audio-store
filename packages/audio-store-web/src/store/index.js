@@ -22,6 +22,7 @@ export default createStore({
     playlists: {},
     tracks: [],
     currentPlaylistId: null,
+    hardwarePlayerLoading: false,
   },
   mutations: {
     currentTrack(state, track) {

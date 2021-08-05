@@ -78,6 +78,9 @@ export async function play(track) {
   if (source) {
     stop();
   }
+
+  store.state.hardwarePlayerLoading = true;
+
   // have to construct source out here - user action not passed into callback
   source = context.createBufferSource();
   const request = indexedDB.open('audioFiles');
@@ -92,6 +95,7 @@ export async function play(track) {
           source.buffer = buffer;
           source.connect(context.destination);
           source.start();
+          store.state.hardwarePlayerLoading = false;
           source.onended = function () {
             store.dispatch('loadNextTrackAsCurrent');
           };
