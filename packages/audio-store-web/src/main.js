@@ -5,4 +5,15 @@ import router from './router';
 import store from './store';
 import './index.css';
 
-createApp(App).use(store).use(router).mount('#app');
+const app = createApp(App);
+
+app.config.errorHandler = (err) => {
+  alert(err);
+};
+
+app.use(store).use(router).mount('#app');
+
+window.addEventListener('error', (e) => {
+  alert(e.error.message);
+  return false;
+});
