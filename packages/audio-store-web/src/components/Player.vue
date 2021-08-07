@@ -29,6 +29,11 @@
       <div class="flex items-center justify-center">
         <Loading v-if="isHardwarePlayerLoading"/>
       </div>
+      <!-- Hack to make mobile display document title and audio controls. -->
+      <!-- This is in turn used by the car to display the document title as "currently playing" -->
+      <audio ref="dummyPlayer" loop>
+        <source src="@/assets/blank.mp3" type="audio/mp3">
+      </audio>
     </div>
   </div>
 </template>
@@ -104,6 +109,7 @@ export default {
 
       try {
         play(this.track);
+        this.$refs.dummyPlayer.play();
       } catch (e) {
         this.$store.dispatch('clearTrack');
         this.$emit('track-fail', this.track);
