@@ -1,7 +1,7 @@
 import store from '@/store';
 
 const AudioContext = window.AudioContext || window.webkitAudioContext;
-let context;
+const context = new AudioContext();
 
 let source;
 
@@ -12,9 +12,6 @@ export function stop() {
   source.stop();
   nextBuffer = null;
   source = null;
-  if (context) {
-    context.close();
-  }
 }
 
 // TODO: REFACTOR THIS TO HAVE LESS DUPE CODE YOU LAZY BUM
@@ -38,7 +35,6 @@ function playAudioId(db, track, curr, end) {
     source.onended = function () {
       if (curr + 1 === end) {
         theDb.close();
-        context.close();
         nextBuffer = null;
         store.dispatch('loadNextTrackAsCurrent');
       } else {
@@ -67,7 +63,6 @@ function playAudioId(db, track, curr, end) {
         source.onended = function () {
           if (curr + 1 === end) {
             theDb.close();
-            context.close();
             store.dispatch('loadNextTrackAsCurrent');
           } else {
             playAudioId(theDb, track, curr + 1, end);
@@ -84,8 +79,6 @@ export async function play(track) {
   if (source) {
     stop();
   }
-
-  context = new AudioContext();
 
   store.state.hardwarePlayerLoading = true;
 
@@ -105,7 +98,6 @@ export async function play(track) {
           source.start();
           store.state.hardwarePlayerLoading = false;
           source.onended = function () {
-            context.close();
             store.dispatch('loadNextTrackAsCurrent');
           };
         }, (err) => {
