@@ -15,5 +15,6 @@ app.use(store).use(router).mount('#app');
 
 window.addEventListener('error', (e) => {
   alert(e.error.message);
+  console.error(e);
   return false;
 });

@@ -1,6 +1,6 @@
 <template>
   <div @swipedown="exit()" class="flex flex-col">
-    <div class="grid grid-row-3 flex-auto">
+    <div v-if="isActive" class="grid grid-row-3 flex-auto">
       <div @click="togglePlay()" class="flex items-center justify-center bg-gray-400">
         play/pause
       </div>
@@ -10,6 +10,10 @@
       <div @click="prev()" class="flex items-center justify-center">
         prev
       </div>
+    </div>
+    <div v-else class="flex flex-col flex-auto items-center justify-center bg-black" @click="makeActive()">
+      <div v-if="track" class="text-white text-6xl">{{track.title}}</div>
+      <div v-if="playlist" class="text-white text-3xl">{{playlist.title}}</div>
     </div>
   </div>
 </template>
@@ -21,9 +25,15 @@ export default {
   name: 'DriveMode',
   data() {
     return {
+      isActive: true,
     };
   },
   props: ['track'],
+  mounted() {
+    setTimeout(() => {
+      this.isActive = false;
+    }, 3000);
+  },
   computed: {
     playlist() {
       return this.$store.getters.currentPlaylist;
@@ -41,6 +51,12 @@ export default {
     },
     next() {
       this.$emit('next');
+    },
+    makeActive() {
+      this.isActive = true;
+      setTimeout(() => {
+        this.isActive = false;
+      }, 3000);
     },
   },
 };
