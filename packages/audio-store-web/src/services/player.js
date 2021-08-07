@@ -1,17 +1,23 @@
 import store from '@/store';
 
 const AudioContext = window.AudioContext || window.webkitAudioContext;
-const context = new AudioContext();
+let context = new AudioContext();
 
 let source;
 
 let nextBuffer;
 
 export function stop() {
-  source.onended = () => {};
-  source.stop();
-  nextBuffer = null;
-  source = null;
+  if (source) {
+    source.onended = () => {};
+    source.stop();
+    nextBuffer = null;
+    source = null;
+  }
+}
+
+export function free() {
+  context = new AudioContext();
 }
 
 // TODO: REFACTOR THIS TO HAVE LESS DUPE CODE YOU LAZY BUM

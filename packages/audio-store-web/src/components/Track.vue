@@ -45,7 +45,7 @@
 
 <script>
 import db from '@/services/db';
-import { play } from '@/services/player';
+import { play, free, stop } from '@/services/player';
 import Loading from '@/components/Loading.vue';
 
 export default {
@@ -63,6 +63,8 @@ export default {
   props: ['track'],
   methods: {
     async loadTrack() {
+      stop();
+      free();
       this.loading = true;
       if (this.track.loaded) {
         await this.$store.dispatch('loadCurrentTrack', this.track);
