@@ -54,54 +54,12 @@ export async function createNewTrack(url) {
     }
   }
 
-  const result = await fetchTrack(url);
-
-  if (result.parts) {
-    const { parts } = result;
-
-    let totalSize = 0;
-
-    const audioIds = await Promise.all(parts.map(async (partBuffer) => {
-      const audioId = await database.add('audio', {
-        data: partBuffer,
-      });
-      totalSize += partBuffer.byteLength;
-
-      return audioId;
-    }));
-
-    const track = {
-      title: `${title}`,
-      loaded: true,
-      dateAdded: Date.now(),
-      size: totalSize,
-      url,
-      videoId,
-      hasParts: true,
-      audioIds,
-    };
-
-    const trackId = await database.put('tracks', track);
-
-    return {
-      id: trackId,
-      ...track,
-    };
-  }
-
-  const audioArrayBuffer = result;
-
-  const audioId = await database.add('audio', {
-    data: audioArrayBuffer,
-  });
-
   const track = {
     title: `${title}`,
-    loaded: true,
+    loaded: false,
     dateAdded: Date.now(),
-    size: audioArrayBuffer.byteLength,
+    size: 0,
     url,
-    audioId,
     videoId,
   };
 

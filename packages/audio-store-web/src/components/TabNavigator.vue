@@ -8,7 +8,7 @@
        @click="go('Load')"
     >
       <div>
-        Load
+        Add
       </div>
     </div>
     <div
