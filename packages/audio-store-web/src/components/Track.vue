@@ -1,6 +1,6 @@
 <template>
 <div>
-  <div class="flex relative p-2 m-1 bg-gray-100 rounded-md" :class="{'bg-green-50': this.track.loaded}">
+  <div class="flex relative p-2 m-1 bg-gray-100 rounded-md overflow-hidden" :class="{'bg-green-50': this.track.loaded}">
     <button
       type="button"
       @click="loadTrack()"

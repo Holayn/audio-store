@@ -2,6 +2,7 @@ const fs = require('fs');
 const ytdl = require('ytdl-core');
 const sanitize = require("sanitize-filename");
 const ffmpeg = require('fluent-ffmpeg');
+const ytpl = require('ytpl');
 
 const AUDIO_FILES_DIRECTORY = 'audio-files';
 
@@ -12,8 +13,24 @@ if (!fs.existsSync('library.json')) {
   library = JSON.parse(fs.readFileSync('library.json'));
 }
 
+const getPlaylist = async (url) => {
+  return ytpl(url);
+}
+
 const getInfo = async (url) => {
-  return ytdl.getBasicInfo(url);
+  try {
+    const playlist = await getPlaylist(url);
+    return {
+      playlist: true,
+      tracks: playlist.items.map(({title, id, shortUrl}) => ({
+        title,
+        videoId: id,
+        url: shortUrl,
+      })),
+    }
+  } catch (e) {
+    return ytdl.getBasicInfo(url);
+  }
 };
 
 const download = async (url) => {

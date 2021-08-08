@@ -44,11 +44,14 @@ router.get('/trackinfo', async (req, res) => {
     return;
   }
 
-  const {videoDetails} = await downloader.getInfo(req.query.url);
-  const {title, lengthSeconds: length, videoId} = videoDetails;
+  const ret = await downloader.getInfo(req.query.url);
+  if (ret.playlist) {
+    res.send(ret);
+    return;
+  }
+  const {title, videoId} = ret;
   res.send({
     title,
-    length,
     videoId,
   });
 });

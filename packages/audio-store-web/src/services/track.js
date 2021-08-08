@@ -10,7 +10,25 @@ export async function getAllTracks() {
 
     // verify that audio is really loaded
     if (track.loaded === true) {
-      if (!audioIds.includes(track.audioId)) {
+      if (track.hasParts) {
+        let missingAudioId = false;
+        track.audioIds.forEach((audioId) => {
+          if (!audioIds.includes(audioId)) {
+            missingAudioId = true;
+          }
+        });
+
+        if (missingAudioId) {
+          track = {
+            ...track,
+            loaded: false,
+            audioIds: null,
+            size: null,
+          };
+
+          await database.put('tracks', track);
+        }
+      } else if (!audioIds.includes(track.audioId)) {
         track = {
           ...track,
           loaded: false,
@@ -31,27 +49,23 @@ export async function getTrack(trackId) {
   return database.get('tracks', trackId);
 }
 
-export async function createNewTrack(url) {
-  const { title, length, videoId } = await fetchInfo(url);
+export async function createNewTrackHelper(url, title, videoId) {
+  console.log(`${title} - ${videoId}`);
   // find a track with this videoId already - don't add it if it exists.
   const database = await db.getDb();
   const keys = await database.getAllKeys('tracks');
-  const res = await Promise.all(keys.map(async (key) => {
+  let existingTrack = null;
+  await Promise.all(keys.map(async (key) => {
     const track = await database.get('tracks', key);
 
     if (track.videoId === videoId) {
-      return track;
+      existingTrack = track;
     }
-
-    return null;
   }));
 
-  for (let i = 0; i < res.length; i += 1) {
-    const track = res[i];
-    if (track != null) {
-      console.log('track already exists');
-      return track;
-    }
+  if (existingTrack) {
+    console.log('track already exists');
+    return existingTrack;
   }
 
   const track = {
@@ -69,6 +83,18 @@ export async function createNewTrack(url) {
     id: trackId,
     ...track,
   };
+}
+
+export async function createNewTrack(url) {
+  const res = await fetchInfo(url);
+  if (res.playlist) {
+    return {
+      playlist: true,
+      tracks: await Promise.all(res.tracks.map(({ title, videoId, url: trackUrl }) => createNewTrackHelper(trackUrl, title, videoId))),
+    };
+  }
+  const { title, videoId } = res;
+  return createNewTrackHelper(url, title, videoId);
 }
 
 export async function loadTrackAudio(track) {
@@ -145,4 +171,9 @@ export async function unloadTrackAudio(track) {
   await database.put('tracks', updatedTrack);
 
   return updatedTrack;
+}
+
+export async function deleteTrack(track) {
+  const database = await db.getDb();
+  return database.delete('tracks', track.id);
 }

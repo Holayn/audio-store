@@ -7,6 +7,7 @@ import {
   getTrack,
   loadTrackAudio,
   unloadTrackAudio,
+  deleteTrack,
 } from '../services/track';
 import {
   createPlaylist,
@@ -100,12 +101,23 @@ export default createStore({
       commit('track', updatedTrack);
     },
     async addNewTrack({ commit }, { url, playlistId }) {
-      const track = await createNewTrack(url);
+      const res = await createNewTrack(url);
       if (playlistId) {
-        const playlist = await getPlaylist(playlistId);
-        playlist.tracks.push(track.id);
-        await updatePlaylist(playlist);
-        commit('updatePlaylist', playlist);
+        if (res.playlist) {
+          const playlist = await getPlaylist(playlistId);
+          playlist.tracks = [
+            ...playlist.tracks,
+            ...res.tracks.map(({ id }) => id),
+          ];
+          await updatePlaylist(playlist);
+          commit('updatePlaylist', playlist);
+        } else {
+          const track = res;
+          const playlist = await getPlaylist(playlistId);
+          playlist.tracks.push(track.id);
+          await updatePlaylist(playlist);
+          commit('updatePlaylist', playlist);
+        }
       }
     },
     async addNewPlaylist({ commit }, playlistName) {
@@ -166,6 +178,28 @@ export default createStore({
       await updatePlaylist(newPlaylist);
       commit('updatePlaylist', newPlaylist);
       dispatch('getPlaylistTracks', playlistId);
+    },
+    async removeTrack({ commit, dispatch, getters }, track) {
+      // remove track from all playlists
+      const { playlists } = getters;
+      await Promise.all(Object.keys(playlists).map(async (playlistId) => {
+        const { tracks } = playlists[playlistId];
+        const trackIndex = tracks.findIndex((playlistTrack) => playlistTrack.id === track.id);
+        if (trackIndex) {
+          await dispatch('removeTrackFromPlaylist', {
+            playlistId,
+            trackIndex,
+          });
+        }
+      }));
+
+      await deleteTrack(track);
+      const trackIndex = getters.tracks.findIndex((allTrack) => allTrack.id === track.id);
+      const newTracks = [
+        ...getters.tracks.slice(0, trackIndex),
+        ...getters.tracks.slice(trackIndex + 1),
+      ];
+      commit('tracks', newTracks);
     },
   },
   getters: {

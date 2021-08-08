@@ -9,12 +9,13 @@ const app = createApp(App);
 
 app.config.errorHandler = (err) => {
   alert(err);
+  console.error(err);
 };
 
 app.use(store).use(router).mount('#app');
 
-window.addEventListener('error', (e) => {
-  alert(e.error.message);
-  console.error(e);
+window.addEventListener('error', (err) => {
+  alert(err.error.message);
+  console.error(err);
   return false;
 });
