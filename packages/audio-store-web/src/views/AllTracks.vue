@@ -1,16 +1,16 @@
 <template>
-  <div>
-      <div class="text-2xl">All Tracks</div>
-      <div class="flex items-start justify-center overflow-y-auto">
-        <div class="justify-center max-w-full w-full">
-          <Track
-            v-for="track in tracks"
-            :key="track.id"
-            :track="track"
-            @remove="removeTrack(track)"/>
-        </div>
+  <div class="flex flex-col h-full">
+    <div class="text-2xl">All Tracks</div>
+    <div class="flex items-start justify-center overflow-y-auto">
+      <div class="justify-center max-w-full w-full">
+        <Track
+          v-for="track in tracks"
+          :key="track.id"
+          :track="track"
+          @remove="removeTrack(track)"/>
       </div>
     </div>
+  </div>
 </template>
 
 <script>
