@@ -5,7 +5,11 @@
       type="button"
       @click="loadTrack()"
       style="height: 3rem; width: 3rem; min-width: 3rem;"
-      class="mr-4 flex items-center justify-center rounded-full bg-black text-white">
+      class="mr-4 flex items-center justify-center rounded-full bg-black text-white focus:outline-none"
+      :class="{
+        'bg-yellow-500': isPlaying,
+      }"
+    >
       <svg v-if="!this.track.loaded" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 15v4c0 1.1.9 2 2 2h14a2 2 0 0 0 2-2v-4M17 9l-5 5-5-5M12 12.8V2.5"/></svg>
       <svg v-else xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
     </button>
@@ -92,6 +96,11 @@ export default {
     },
     toggleMenu() {
       this.showMenu = !this.showMenu;
+    },
+  },
+  computed: {
+    isPlaying() {
+      return this.track === this.$store.getters.currentTrack;
     },
   },
 };
