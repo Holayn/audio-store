@@ -11,6 +11,12 @@
         class="mx-1 w-16 rounded-md bg-black text-white">
         delete
       </button>
+      <button
+        type="button"
+        @click="loadAll()"
+        class="mx-1 w-16 rounded-md bg-black text-white">
+        load all
+      </button>
     </div>
     <div class="flex items-start justify-center overflow-y-auto">
       <div class="justify-center max-w-full w-full">
@@ -18,6 +24,7 @@
           v-for="(track, index) in tracks"
           :key="track.id"
           :track="track"
+          :ref="setTrackRef"
           @trackLoaded="trackLoaded()"
           @remove="removeTrack(index)"/>
       </div>
@@ -34,12 +41,18 @@ export default {
   async created() {
     this.$store.dispatch('getPlaylistTracks', this.id);
   },
+  beforeUpdate() {
+    this.trackRefs = [];
+  },
   components: {
     Track,
   },
   data() {
     return {
       showMenu: false,
+      trackRefs: [],
+      loadQueueMaxLength: 5,
+      isLoadingAll: false,
     };
   },
   computed: {
@@ -75,6 +88,52 @@ export default {
       const track = this.tracks.find((t) => t.id === failedTrack.id);
       track.loaded = false;
       alert('loading failed');
+    },
+    setTrackRef(el) {
+      if (el) {
+        this.trackRefs.push(el);
+      }
+    },
+    loadAll() {
+      this.isLoadingAll = true;
+      const queue = [];
+      const tracksLoaded = this.trackRefs.map((trackRef) => ({
+        loaded: false,
+        trackRef,
+      }));
+      const context = {
+        tracksLoaded,
+        tracksLoading: 0,
+      };
+      this.loadAllHelper(context, this.trackRefs[0], 0);
+    },
+    /* eslint no-param-reassign: ['off'] */
+    async loadAllHelper(context, trackRef, trackIndex) {
+      if (!trackRef) {
+        return;
+      }
+      const loadNext = () => {
+        if (context.tracksLoading < this.loadQueueMaxLength) {
+          // find next track to load
+          const nextTrackIndexToLoad = context.tracksLoaded.findIndex((track, index) => !track.loaded && index > trackIndex && !track.trackRef.loading);
+          if (nextTrackIndexToLoad !== -1) {
+            const nextTrackToLoad = context.tracksLoaded[nextTrackIndexToLoad];
+            this.loadAllHelper(context, nextTrackToLoad.trackRef, nextTrackIndexToLoad);
+          } else if (context.tracksLoading === 0) {
+            this.isLoadingAll = false;
+          }
+        }
+      };
+
+      context.tracksLoading += 1;
+      if (!this.tracks[trackIndex].loaded) {
+        trackRef.loadTrack().then(() => {
+          context.tracksLoading -= 1;
+          loadNext();
+        });
+      }
+
+      loadNext();
     },
   },
 };

@@ -63,14 +63,16 @@ export default {
   props: ['track'],
   methods: {
     async loadTrack() {
-      stop();
-      free();
       this.loading = true;
+
       if (this.track.loaded) {
+        stop();
+        free();
         await this.$store.dispatch('loadCurrentTrack', this.track);
       } else {
         await this.$store.dispatch('loadTrack', this.track);
       }
+
       this.loading = false;
     },
     unload() {
