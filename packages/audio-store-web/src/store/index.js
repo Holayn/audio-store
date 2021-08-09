@@ -33,7 +33,11 @@ export default createStore({
         window.document.title = DOCUMENT_TITLE;
       }
 
-      state.currentTrack = track;
+      // Handle current track being set to currently playing
+      state.currentTrack = null;
+      setTimeout(() => {
+        state.currentTrack = track;
+      });
     },
     tracks(state, tracks) {
       state.tracks = tracks;
