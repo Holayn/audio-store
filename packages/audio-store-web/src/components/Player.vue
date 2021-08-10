@@ -1,6 +1,6 @@
 <template>
   <div :class="containerClass">
-    <div v-if="isDriveMode" class="flex flex-auto flex-col bg-white">
+    <div v-if="isDriveMode" class="flex flex-auto flex-col bg-white max-h-full">
       <DriveMode
         class="flex flex-auto"
         @togglePlay="togglePlay()"
@@ -12,28 +12,33 @@
       />
       <span class="text-xs italic text-gray-400">swipe down to exit</span>
     </div>
-    <div v-else class="grid grid-cols-3 bg-gray-900 py-4">
-      <div></div>
-      <div class="flex justify-center">
-        <PlayerButton @click="prev()" class="mx-1">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="19 20 9 12 19 4 19 20"></polygon><line x1="5" y1="19" x2="5" y2="5"></line></svg>
-        </PlayerButton>
-        <PlayerButton @click="togglePlay()" class="mx-1">
-          <svg v-if="!this.isPlaying" class="relative" style="left: 2px;" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-          <svg v-else xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
-        </PlayerButton>
-        <PlayerButton @click="next()" class="mx-1">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 4 15 12 5 20 5 4"></polygon><line x1="19" y1="5" x2="19" y2="19"></line></svg>
-        </PlayerButton>
+    <div v-else class="bg-gray-900">
+      <div class="overflow-hidden h-6 bg-gray-700">
+        <div ref="trackTitle" class="text-gray-400">{{trackTitle}}</div>
       </div>
-      <div class="flex items-center justify-center">
-        <Loading v-if="isHardwarePlayerLoading"/>
+      <div class="grid grid-cols-3 py-4">
+        <div></div>
+        <div class="flex justify-center">
+          <PlayerButton @click="prev()" class="mx-1">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="19 20 9 12 19 4 19 20"></polygon><line x1="5" y1="19" x2="5" y2="5"></line></svg>
+          </PlayerButton>
+          <PlayerButton @click="togglePlay()" class="mx-1">
+            <svg v-if="!this.isPlaying" class="relative" style="left: 2px;" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+            <svg v-else xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+          </PlayerButton>
+          <PlayerButton @click="next()" class="mx-1">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 4 15 12 5 20 5 4"></polygon><line x1="19" y1="5" x2="19" y2="19"></line></svg>
+          </PlayerButton>
+        </div>
+        <div class="flex items-center justify-center">
+          <Loading v-if="isHardwarePlayerLoading"/>
+        </div>
+        <!-- Hack to make mobile display document title and audio controls. -->
+        <!-- This is in turn used by the car to display the document title as "currently playing" -->
+        <audio ref="dummyPlayer" loop>
+          <source src="@/assets/blank.mp3" type="audio/mp3">
+        </audio>
       </div>
-      <!-- Hack to make mobile display document title and audio controls. -->
-      <!-- This is in turn used by the car to display the document title as "currently playing" -->
-      <audio ref="dummyPlayer" loop>
-        <source src="@/assets/blank.mp3" type="audio/mp3">
-      </audio>
     </div>
   </div>
 </template>
@@ -62,9 +67,15 @@ export default {
       audioData: null,
       isDriveMode: false,
       isPlaying: false,
+      tippy: null,
     };
   },
-  props: {
+  updated() {
+    /* eslint no-undef: ['off'] */
+    this.tippy = tippy(this.$refs.trackTitle, {
+      content: this.trackTitle,
+      trigger: 'mouseenter click',
+    });
   },
   computed: {
     containerClass() {
@@ -83,6 +94,11 @@ export default {
     },
     isHardwarePlayerLoading() {
       return this.$store.state.hardwarePlayerLoading;
+    },
+    trackTitle() {
+      if (!this.track) return '';
+
+      return this.track.title;
     },
   },
   watch: {

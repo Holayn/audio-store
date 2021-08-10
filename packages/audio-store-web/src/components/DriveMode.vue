@@ -1,5 +1,5 @@
 <template>
-  <div @swipedown="exit()" class="flex flex-col">
+  <div @swipedown="exit()" class="flex flex-col overflow-hidden">
     <div v-if="isActive" class="grid grid-row-3 flex-auto">
       <div @click="togglePlay()" class="flex items-center justify-center bg-gray-400">
         play/pause
