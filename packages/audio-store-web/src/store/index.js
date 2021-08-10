@@ -205,6 +205,14 @@ export default createStore({
       ];
       commit('tracks', newTracks);
     },
+    async updatePlaylist({ commit, getters }, { id, title }) {
+      const playlist = {
+        ...getters.playlists[id],
+        title,
+      };
+      await updatePlaylist(playlist);
+      commit('updatePlaylist', playlist);
+    },
   },
   getters: {
     currentTrack(state) {

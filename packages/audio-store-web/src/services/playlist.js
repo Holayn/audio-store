@@ -31,7 +31,8 @@ export async function createPlaylist(playlistName) {
 
 export async function updatePlaylist(playlist) {
   const database = await db.getDb();
-  await database.put('playlists', playlist);
+  // because playlist may be a proxy..
+  await database.put('playlists', JSON.parse(JSON.stringify(playlist)));
 }
 
 export async function deletePlaylist(playlistId) {

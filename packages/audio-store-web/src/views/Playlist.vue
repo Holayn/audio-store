@@ -7,6 +7,12 @@
     <div v-if="showMenu" class="mb-2">
       <button
         type="button"
+        @click="rename()"
+        class="mx-1 w-16 rounded-md bg-black text-white">
+        rename
+      </button>
+      <button
+        type="button"
         @click="deletePlaylist()"
         class="mx-1 w-16 rounded-md bg-black text-white">
         delete
@@ -92,6 +98,15 @@ export default {
     setTrackRef(el) {
       if (el) {
         this.trackRefs.push(el);
+      }
+    },
+    rename() {
+      const newTitle = prompt('new playlist title');
+      if (newTitle) {
+        this.$store.dispatch('updatePlaylist', {
+          id: this.id,
+          title: newTitle,
+        });
       }
     },
     loadAll() {
