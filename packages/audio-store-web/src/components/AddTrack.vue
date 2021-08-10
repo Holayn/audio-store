@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col justify-center items-center">
+  <div class="flex flex-col justify-center items-center w-full">
     <div>
       <input type="text" v-model="urlToLoad" class="border text-gray-900 p-1 rounded" placeholder="yt track/playlist url">
     </div>
@@ -12,7 +12,7 @@
     <button
       type="button"
       @click="loadTrack()"
-      class="w-16 h-1/2 mt-4 flex items-center justify-center rounded-md bg-black text-white">
+      class="w-16 p-2 mt-4 flex items-center justify-center rounded-md bg-black text-white">
       load
     </button>
     <div v-if="loading" class="flex justify-center pt-16">
