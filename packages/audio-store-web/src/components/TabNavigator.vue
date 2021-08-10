@@ -1,7 +1,7 @@
 <template>
   <div class="grid grid-cols-2">
     <div
-      class="flex h-10 items-center justify-center cursor-pointer"
+      class="flex h-10 items-center justify-center cursor-pointer border-gray-300"
       :class="{
         'border-t-2': this.currentRouteName === 'Load'
       }"
@@ -12,7 +12,7 @@
       </div>
     </div>
     <div
-      class="flex h-10 items-center justify-center cursor-pointer"
+      class="flex h-10 items-center justify-center cursor-pointer border-gray-300"
       :class="{
         'border-t-2': this.currentRoutePath.match(/.*collection.*/)
       }"
