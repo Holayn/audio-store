@@ -1,10 +1,10 @@
 <template>
   <div class="flex flex-col justify-center items-center">
     <div>
-      <input type="text" v-model="urlToLoad" class="border text-gray-900" placeholder="yt url">
+      <input type="text" v-model="urlToLoad" class="border text-gray-900 p-1 rounded" placeholder="yt track/playlist url">
     </div>
-    <div class="mt-4">Add to:</div>
-    <select class="mt-4 p-2 bg-gray-300" v-model="playlistId">
+    <select class="mt-4 p-2 bg-gray-300 text-gray-600 w-1/2 rounded" v-model="playlistId">
+      <option :value="null" disabled>add to playlist...</option>
       <option v-for="playlistId in playlistIds" :key="playlistId" :value="playlistId">
         {{$store.getters.playlists[playlistId].title}}
       </option>

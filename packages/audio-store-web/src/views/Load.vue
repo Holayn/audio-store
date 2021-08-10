@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="my-4">
+    <div class="flex flex-col justify-center items-center flex-auto my-4">
       <AddTrack/>
     </div>
   </div>

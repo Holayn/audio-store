@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="flex p-2 bg-gray-50 cursor-pointer">
-      <div class="flex flex-auto ml-4 justify-start">
+      <div class="flex flex-auto ml-4 justify-start truncate">
         {{title}}
       </div>
       <div>
