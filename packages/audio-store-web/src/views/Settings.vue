@@ -70,6 +70,7 @@ export default {
       }
     },
     async reset() {
+      localStorage.clear();
       await db.delete();
     },
   },

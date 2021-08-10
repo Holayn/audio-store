@@ -22,6 +22,7 @@ export function free() {
 
 // TODO: REFACTOR THIS TO HAVE LESS DUPE CODE YOU LAZY BUM
 function playAudioId(db, track, curr, end) {
+  localStorage.setItem('partNumber', curr);
   const audioId = track.audioIds[curr];
   const theDb = db;
   source = context.createBufferSource();
@@ -88,12 +89,18 @@ export async function play(track) {
 
   store.state.hardwarePlayerLoading = true;
 
+  localStorage.removeItem('trackId');
+  localStorage.removeItem('playlistId');
+  localStorage.removeItem('partNumber');
+
   // have to construct source out here - user action not passed into callback
   source = context.createBufferSource();
   const request = indexedDB.open('audioFiles');
   request.onsuccess = (event) => {
     const db2 = event.target.result;
     if (track.hasParts) {
+      localStorage.setItem('trackId', track.id);
+      localStorage.setItem('playlistId', store.state.currentPlaylistId);
       playAudioId(db2, track, 0, track.audioIds.length);
     } else {
       db2.transaction(['audio']).objectStore('audio').get(track.audioId).onsuccess = (e) => {
