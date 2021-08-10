@@ -49,7 +49,7 @@ router.get('/trackinfo', async (req, res) => {
     res.send(ret);
     return;
   }
-  const {title, videoId} = ret;
+  const {title, videoId} = ret.videoDetails;
   res.send({
     title,
     videoId,
