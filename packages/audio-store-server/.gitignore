@@ -2,3 +2,4 @@ node_modules
 audio-files
 library.json
 .env
+*.pem

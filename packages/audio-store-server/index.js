@@ -3,6 +3,8 @@ const helmet = require("helmet");
 const winston = require('winston');
 const expressWinston = require('express-winston');
 const cors = require('cors');
+const https = require('https');
+const fs = require('fs');
 
 const routes = require('./routes');
 
@@ -29,6 +31,9 @@ app.use(expressWinston.logger({
 
 app.use('/', routes);
 
-app.listen(8000, () => {
-  console.info('Listening on 8000');
-});
+const httpsServer = https.createServer({
+  key: fs.readFileSync(__dirname + '/sslcert/192.168.0.133-key.pem', 'utf8'),
+  cert: fs.readFileSync(__dirname + '/sslcert/192.168.0.133.pem', 'utf8'),
+}, app);
+
+httpsServer.listen(8000);

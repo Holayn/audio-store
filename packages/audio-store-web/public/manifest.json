@@ -8,12 +8,12 @@
       "sizes": "192x192"
     },
     {
-      "src": "/img/icons/android-chrome-512x512.png",
+      "src": "/img/icons/android-chrome-384x384.png",
       "type": "image/png",
-      "sizes": "512x512"
+      "sizes": "384x384"
     }
   ],
-  "start_url": "/collection",
+  "start_url": "/",
   "background_color": "#FFFFFF",
   "display": "standalone",
   "scope": "/",
