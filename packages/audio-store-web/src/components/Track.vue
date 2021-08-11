@@ -100,7 +100,10 @@ export default {
   },
   computed: {
     isPlaying() {
-      return this.track === this.$store.getters.currentTrack;
+      if (this.track && this.$store.getters.currentTrack) {
+        return this.track.id === this.$store.getters.currentTrack.id;
+      }
+      return false;
     },
   },
 };
