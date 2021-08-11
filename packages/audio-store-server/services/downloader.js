@@ -42,6 +42,7 @@ const download = async (url) => {
   }
 
   return new Promise(async (res) => {
+    console.log(`downloading: ${title}`);
     const stream = ytdl(url, {
       quality: 'highestaudio',
       filter: 'audioonly',
