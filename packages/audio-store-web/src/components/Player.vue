@@ -54,6 +54,9 @@ import {
   resume,
   stop,
 } from '@/services/player';
+import {
+  getTrack,
+} from '@/services/track';
 
 export default {
   name: 'Player',
@@ -68,7 +71,19 @@ export default {
       isDriveMode: false,
       isPlaying: false,
       tippy: null,
+      partNumberStart: null,
     };
+  },
+  async created() {
+    const trackId = parseInt(localStorage.getItem('trackId'), 10);
+    const playlistId = parseInt(localStorage.getItem('playlistId'), 10);
+    const partNumber = parseInt(localStorage.getItem('partNumber'), 10);
+
+    if (playlistId && trackId) {
+      const track = await getTrack(trackId);
+      await this.$store.dispatch('getPlaylistTracks', playlistId);
+      this.$store.dispatch('loadCurrentTrack', track);
+    }
   },
   updated() {
     /* eslint no-undef: ['off'] */
@@ -105,33 +120,34 @@ export default {
     track(track) {
       this.loadTrack(track);
     },
-    isHardwarePlayerLoading() {
-      if (this.isHardwarePlayerLoading) {
-        this.isPlaying = false;
-      } else {
-        this.isPlaying = true;
-      }
-    },
   },
   methods: {
     driveMode() {
       this.isDriveMode = !this.isDriveMode;
     },
     async loadTrack() {
-      if (!this.track) {
+      if (!this.track || !this.$store.state.canPlay) {
         this.isPlaying = false;
         return;
       }
 
       try {
+        this.isPlaying = true;
         play(this.track);
         this.$refs.dummyPlayer.play();
       } catch (e) {
+        this.isPlaying = false;
         this.$store.dispatch('clearTrack');
         this.$emit('track-fail', this.track);
       }
     },
     togglePlay() {
+      if (!this.$store.state.canPlay) {
+        // Player was initially loaded with a track, but we can now play it since
+        // the user explicitly pressed play.
+        this.$store.commit('canPlay', true);
+        this.loadTrack();
+      }
       if (!this.track || !this.$store.getters.currentTrackLoaded) {
         return;
       }

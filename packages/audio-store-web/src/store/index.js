@@ -24,6 +24,7 @@ export default createStore({
     tracks: [],
     currentPlaylistId: null,
     hardwarePlayerLoading: false,
+    canPlay: false,
   },
   mutations: {
     currentTrack(state, track) {
@@ -65,6 +66,9 @@ export default createStore({
     },
     currentPlaylistId(state, currentPlaylistId) {
       state.currentPlaylistId = currentPlaylistId;
+    },
+    canPlay(state, flag) {
+      state.canPlay = flag;
     },
   },
   actions: {

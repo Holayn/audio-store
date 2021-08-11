@@ -73,6 +73,7 @@ export default {
         stop();
         free();
         await this.$store.dispatch('loadCurrentTrack', this.track);
+        this.$store.commit('canPlay', true);
       } else {
         await this.$store.dispatch('loadTrack', this.track);
       }

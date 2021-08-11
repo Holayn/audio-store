@@ -29,12 +29,6 @@ export default {
     Player,
     TabNavigator,
   },
-  data() {
-    return {
-    };
-  },
-  computed: {
-  },
   methods: {
     driveMode() {
       this.$refs.player.driveMode();
