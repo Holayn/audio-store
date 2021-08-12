@@ -8,15 +8,17 @@
       "sizes": "192x192"
     },
     {
-      "src": "/img/icons/android-chrome-384x384.png",
+      "src": "/img/icons/512fwowa.png",
       "type": "image/png",
-      "sizes": "384x384"
+      "sizes": "512x512"
     }
   ],
-  "start_url": "/",
+  "start_url": "https://192.168.0.133:8000",
   "background_color": "#FFFFFF",
   "display": "standalone",
   "scope": "/",
   "theme_color": "#FFFFFF",
-  "description": "Stores music to play offline"
+  "description": "Stores music to play offline",
+  "prefer_related_applications": true,
+  "related_applications": []
 }
