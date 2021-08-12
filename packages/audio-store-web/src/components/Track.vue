@@ -13,7 +13,7 @@
       <svg v-if="!this.track.loaded" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 15v4c0 1.1.9 2 2 2h14a2 2 0 0 0 2-2v-4M17 9l-5 5-5-5M12 12.8V2.5"/></svg>
       <svg v-else xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
     </button>
-    <div class="flex-auto mr-1 max-h-12 overflow-auto">
+    <div ref="trackTitle" class="flex-auto mr-1 max-h-12 overflow-hidden">
       {{this.track.title}}
     </div>
     <div>
@@ -62,9 +62,26 @@ export default {
       showMenu: false,
       audioArrayBuffer: null,
       loading: false,
+      tippy: null,
     };
   },
   props: ['track'],
+  mounted() {
+    if (this.tippy) return;
+    /* eslint no-undef: ['off'] */
+    this.tippy = tippy(this.$refs.trackTitle, {
+      content: this.track.title,
+      trigger: 'mouseenter click',
+    });
+  },
+  updated() {
+    if (this.tippy) return;
+    /* eslint no-undef: ['off'] */
+    this.tippy = tippy(this.$refs.trackTitle, {
+      content: this.track.title,
+      trigger: 'mouseenter click',
+    });
+  },
   methods: {
     async loadTrack() {
       this.loading = true;
