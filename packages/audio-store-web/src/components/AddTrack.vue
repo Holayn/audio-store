@@ -1,6 +1,6 @@
 <template>
-  <div class="grid grid-rows-2 h-full w-full">
-    <div class="flex flex-col flex-auto justify-end items-center w-full">
+  <div class="flex flex-col h-full w-full">
+    <div class="flex flex-col flex-auto justify-end items-center w-full h-1/2">
       <div>
         <input type="text" v-model="urlToLoad" class="border text-gray-900 p-1 rounded" placeholder="yt track/playlist url">
       </div>
@@ -17,8 +17,8 @@
         load
       </button>
     </div>
-    <div class="flex-auto">
-      <div class="flex justify-center pt-16">
+    <div class="flex-auto h-1/2">
+      <div class="flex justify-center m-16">
         <Loading v-if="loading"/>
       </div>
     </div>
