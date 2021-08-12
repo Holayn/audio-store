@@ -82,16 +82,27 @@ function playAudioId(db, track, curr, end) {
   }
 }
 
-export async function play(track) {
+export async function play(track, partNumberStart) {
   if (source) {
     stop();
   }
 
+  let partToStart = partNumberStart;
+
   store.state.hardwarePlayerLoading = true;
+
+  if (localStorage.getItem('trackId')) {
+    if (track.id !== parseInt(localStorage.getItem('trackId'), 10)) {
+      partToStart = 0;
+    }
+  }
 
   localStorage.removeItem('trackId');
   localStorage.removeItem('playlistId');
   localStorage.removeItem('partNumber');
+
+  localStorage.setItem('trackId', track.id);
+  localStorage.setItem('playlistId', store.state.currentPlaylistId);
 
   // have to construct source out here - user action not passed into callback
   source = context.createBufferSource();
@@ -99,9 +110,11 @@ export async function play(track) {
   request.onsuccess = (event) => {
     const db2 = event.target.result;
     if (track.hasParts) {
-      localStorage.setItem('trackId', track.id);
-      localStorage.setItem('playlistId', store.state.currentPlaylistId);
-      playAudioId(db2, track, 0, track.audioIds.length);
+      if (partToStart) {
+        playAudioId(db2, track, partToStart, track.audioIds.length);
+      } else {
+        playAudioId(db2, track, 0, track.audioIds.length);
+      }
     } else {
       db2.transaction(['audio']).objectStore('audio').get(track.audioId).onsuccess = (e) => {
         const audioArrayBuffer = e.target.result.data;

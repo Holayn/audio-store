@@ -83,6 +83,7 @@ export default {
       const track = await getTrack(trackId);
       await this.$store.dispatch('getPlaylistTracks', playlistId);
       this.$store.dispatch('loadCurrentTrack', track);
+      this.partNumberStart = partNumber;
     }
   },
   updated() {
@@ -125,7 +126,7 @@ export default {
     driveMode() {
       this.isDriveMode = !this.isDriveMode;
     },
-    async loadTrack() {
+    async loadTrack(isFirstPlay) {
       if (!this.track || !this.$store.state.canPlay) {
         this.isPlaying = false;
         return;
@@ -133,7 +134,11 @@ export default {
 
       try {
         this.isPlaying = true;
-        play(this.track);
+        if (isFirstPlay) {
+          play(this.track, this.partNumberStart);
+        } else {
+          play(this.track);
+        }
         this.$refs.dummyPlayer.play();
       } catch (e) {
         this.isPlaying = false;
@@ -146,8 +151,10 @@ export default {
         // Player was initially loaded with a track, but we can now play it since
         // the user explicitly pressed play.
         this.$store.commit('canPlay', true);
-        this.loadTrack();
+        this.loadTrack(true);
+        return;
       }
+
       if (!this.track || !this.$store.getters.currentTrackLoaded) {
         return;
       }
