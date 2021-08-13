@@ -27,6 +27,7 @@
     <Loading v-if="backupTracksLoading" class="ml-2"/>
     <MenuButton @click="backupPlaylists()" title="Backup Playlists" class="pb-1"/>
     <Loading v-if="backupPlaylistsLoading" class="ml-2"/>
+    <MenuButton @click="reload()" title="Reload" class="text-blue-500"/>
     <MenuButton @click="reset()" title="Reset" class="text-red-500"/>
   </div>
 </template>
@@ -72,6 +73,9 @@ export default {
     async reset() {
       localStorage.clear();
       await db.delete();
+    },
+    reload() {
+      window.location.reload();
     },
   },
 };
