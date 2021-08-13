@@ -7,7 +7,7 @@
       <div @click="next()" class="flex items-center justify-center bg-red-400">
         next
       </div>
-      <div @click="prev()" class="flex items-center justify-center">
+      <div @click="previous()" class="flex items-center justify-center">
         prev
       </div>
     </div>
