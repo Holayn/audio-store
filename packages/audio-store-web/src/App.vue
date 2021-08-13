@@ -14,7 +14,7 @@
       <TabNavigator/>
     </div>
     <div>
-      <Player ref="player" @trackFail="trackFailed($event)"/>
+      <Player ref="player"/>
     </div>
   </div>
 </template>

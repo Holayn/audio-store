@@ -12,7 +12,7 @@
       />
       <span class="text-xs italic text-gray-400">swipe down to exit</span>
     </div>
-    <div v-else class="bg-gray-900">
+    <div v-show="!isDriveMode" class="bg-gray-900">
       <div class="overflow-hidden h-6 bg-gray-700">
         <div ref="trackTitle" class="text-gray-400">{{trackTitle}}</div>
       </div>
@@ -143,7 +143,7 @@ export default {
       } catch (e) {
         this.isPlaying = false;
         this.$store.dispatch('clearTrack');
-        this.$emit('track-fail', this.track);
+        throw e;
       }
     },
     togglePlay() {
