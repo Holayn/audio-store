@@ -90,6 +90,9 @@ const download = async (url) => {
           }
         });
 
+        // delete original file
+        fs.unlinkSync(filename);
+
         res({
           filename,
           parts,
