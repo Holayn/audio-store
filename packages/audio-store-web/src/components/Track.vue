@@ -49,7 +49,7 @@
 
 <script>
 import db from '@/services/db';
-import { play, free, stop } from '@/services/player';
+import { play, stop } from '@/services/player';
 import Loading from '@/components/Loading.vue';
 
 export default {
@@ -88,7 +88,6 @@ export default {
 
       if (this.track.loaded) {
         stop();
-        free();
         await this.$store.dispatch('loadCurrentTrack', this.track);
         this.$store.commit('canPlay', true);
       } else {
