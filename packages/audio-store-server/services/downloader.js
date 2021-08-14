@@ -41,7 +41,7 @@ const download = async (url) => {
     return library[videoId];
   }
 
-  return new Promise(async (res) => {
+  return new Promise(async (res, rej) => {
     console.log(`downloading: ${title}`);
     const stream = ytdl(url, {
       quality: 'highestaudio',
@@ -56,6 +56,7 @@ const download = async (url) => {
     proc.save(filename);
     proc.on('error', (err) => {
       console.log(`err: ${err.message}`);
+      rej();
     });
     proc.on('end', async () => {
       console.log('done');

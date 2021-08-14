@@ -63,19 +63,23 @@ router.get('/download', async (req, res) => {
     return;
   }
 
-  const {filename, parts} = await downloader.download(req.query.url);
+  try {
+    const {filename, parts} = await downloader.download(req.query.url);
 
-  if (parts) {
-    res.send({
-      parts,
-    });
-  } else {
-    res.sendFile(filename, {
-      root: path.join(__dirname, '../'),
-      headers: {
-        'Content-Type': 'audio/mp3',
-      },
-    });
+    if (parts) {
+      res.send({
+        parts,
+      });
+    } else {
+      res.sendFile(filename, {
+        root: path.join(__dirname, '../'),
+        headers: {
+          'Content-Type': 'audio/mp3',
+        },
+      });
+    }
+  } catch (e) {
+    res.sendStatus(500);
   }
 });
 

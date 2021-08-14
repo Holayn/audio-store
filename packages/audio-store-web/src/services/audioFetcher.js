@@ -1,17 +1,36 @@
 import { AUDIO_FETCH_BASE_URL } from '../globals';
 
-let offline = null;
+function timeout(ms, promise) {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => {
+      reject(new Error('TIMEOUT'))
+    }, ms)
+
+    promise
+      .then(value => {
+        clearTimeout(timer)
+        resolve(value)
+      })
+      .catch(reason => {
+        clearTimeout(timer)
+        reject(reason)
+      });
+  });
+}
+
 
 export async function isOffline() {
-  if (offline === null) {
-    const res = await fetch(`${AUDIO_FETCH_BASE_URL}/test`).catch(() => false);
-    if (res === false || res.status !== 200) {
-      offline = true;
+  try {
+    const res = await timeout(5000, fetch(`${AUDIO_FETCH_BASE_URL}/test`));
+    if (res.status !== 200) {
+      return true;
     }
-    offline = false;
+  } catch (e) {
+    alert(e);
+    return true;
   }
 
-  return offline;
+  return false;
 }
 
 export async function fetchInfo(url) {
