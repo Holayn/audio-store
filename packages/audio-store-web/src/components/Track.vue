@@ -82,6 +82,11 @@ export default {
       trigger: 'mouseenter click',
     });
   },
+  unmounted() {
+    if (this.tippy) {
+      this.tippy.destroy();
+    }
+  },
   methods: {
     async loadTrack() {
       this.loading = true;
