@@ -3,21 +3,20 @@ import { AUDIO_FETCH_BASE_URL } from '../globals';
 function timeout(ms, promise) {
   return new Promise((resolve, reject) => {
     const timer = setTimeout(() => {
-      reject(new Error('TIMEOUT'))
-    }, ms)
+      reject(new Error('TIMEOUT'));
+    }, ms);
 
     promise
-      .then(value => {
-        clearTimeout(timer)
-        resolve(value)
+      .then((value) => {
+        clearTimeout(timer);
+        resolve(value);
       })
-      .catch(reason => {
-        clearTimeout(timer)
-        reject(reason)
+      .catch((reason) => {
+        clearTimeout(timer);
+        reject(reason);
       });
   });
 }
-
 
 export async function isOffline() {
   try {
