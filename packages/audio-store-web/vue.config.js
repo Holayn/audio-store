@@ -10,7 +10,9 @@ module.exports = {
   configureWebpack: {
     plugins: [
       // Other plugins...
-      new GenerateSW(),
+      new GenerateSW({
+        maximumFileSizeToCacheInBytes: 5000000,
+      }),
     ],
   },
 }
