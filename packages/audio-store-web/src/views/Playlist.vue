@@ -1,30 +1,30 @@
 <template>
   <div class="flex flex-col h-full">
     <div class="flex flex-col justify-center p-2 text-2xl truncate">{{title}}</div>
-    <div class="flex justify-center m-2">
+    <div class="flex justify-center p-2">
       <svg @click="toggleMenu()" class="cursor-pointer" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
     </div>
-    <div v-if="showMenu" class="mb-2">
+    <div v-if="showMenu" class="my-2">
       <button
         type="button"
         @click="rename()"
-        class="mx-1 w-16 rounded-md bg-black text-white">
+        class="mx-1 p-1 w-16 rounded-md bg-black text-white">
         rename
       </button>
       <button
         type="button"
         @click="deletePlaylist()"
-        class="mx-1 w-16 rounded-md bg-black text-white">
+        class="mx-1 p-1 w-16 rounded-md bg-black text-white">
         delete
       </button>
       <button
         type="button"
         @click="loadAll()"
-        class="mx-1 w-16 rounded-md bg-black text-white">
+        class="mx-1 p-1 w-16 rounded-md bg-black text-white">
         load all
       </button>
     </div>
-    <div class="flex items-start justify-center overflow-y-auto">
+    <div class="flex overflow-y-auto">
       <div class="max-w-full w-full">
         <Track
           v-for="(track, index) in tracks"

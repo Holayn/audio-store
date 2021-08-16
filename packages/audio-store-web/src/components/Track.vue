@@ -28,19 +28,19 @@
       v-if="this.track.loaded"
       type="button"
       @click="unload()"
-      class="mx-1 w-16 rounded-md bg-black text-white">
+      class="mx-1 p-1 w-16 rounded-md bg-black text-white">
       unload
     </button>
     <button
       type="button"
       @click="remove()"
-      class="mx-1 w-16 rounded-md bg-black text-white">
+      class="mx-1 p-1 w-16 rounded-md bg-black text-white">
       remove
     </button>
     <button
       type="button"
       @click="info()"
-      class="mx-1 w-16 rounded-md bg-black text-white">
+      class="mx-1 p-1 w-16 rounded-md bg-black text-white">
       info
     </button>
   </div>
