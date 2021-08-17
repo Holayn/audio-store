@@ -48,7 +48,7 @@ const download = async (url) => {
       filter: 'audioonly',
     });
 
-    const filename = `${AUDIO_FILES_DIRECTORY}/[[[${videoId}]]] - ${sanitize(title)}.mp3`;
+    const filename = `${AUDIO_FILES_DIRECTORY}/[[[${videoId}]]].mp3`;
 
     const proc = ffmpeg({
       source: stream,
@@ -64,7 +64,7 @@ const download = async (url) => {
       if (lengthSeconds > 300) {
         // split into 1 minute chunks
         const numParts = Math.ceil(lengthSeconds / 60);
-        const partProc = ffmpeg(filename).outputOptions(['-f segment', '-segment_time 60', '-c copy']).output(`${AUDIO_FILES_DIRECTORY}/[[[${videoId}]]] - ${sanitize(title)} - [[[%03d]]].mp3`);
+        const partProc = ffmpeg(filename).outputOptions(['-f segment', '-segment_time 60', '-c copy']).output(`${AUDIO_FILES_DIRECTORY}/[[[${videoId}]]]-[[[%03d]]].mp3`);
 
         partProc.run();
         await new Promise(
@@ -81,7 +81,7 @@ const download = async (url) => {
 
         const parts = [];
         for (let i = 0; i < numParts; i += 1) {
-          parts.push(`${AUDIO_FILES_DIRECTORY}/[[[${videoId}]]] - ${sanitize(title)} - [[[${getFileNum(i)}]]].mp3`);
+          parts.push(`${AUDIO_FILES_DIRECTORY}/[[[${videoId}]]]-[[[${getFileNum(i)}]]].mp3`);
         }
 
         Object.assign(library, {
