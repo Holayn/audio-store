@@ -6,8 +6,30 @@ request.onsuccess = (event) => {
   db = event.target.result;
 };
 
-const AudioContext = window.AudioContext || window.webkitAudioContext;
-const context = new AudioContext();
+function createAudioContext() {
+  const AudioCtor = window.AudioContext || window.webkitAudioContext;
+
+  let context = new AudioCtor();
+
+  // Check if hack is necessary. Only occurs in iOS6+ devices
+  // and only when you first boot the iPhone, or play a audio/video
+  // with a different sample rate
+  if (context.sampleRate !== 48000) {
+    const buffer = context.createBuffer(1, 1, 48000);
+    const dummy = context.createBufferSource();
+    dummy.buffer = buffer;
+    dummy.connect(context.destination);
+    dummy.start(0);
+    dummy.disconnect();
+
+    context.close(); // dispose old context
+    context = new AudioCtor();
+  }
+
+  return context;
+}
+
+let context = createAudioContext();
 
 let source;
 
@@ -20,6 +42,11 @@ export function stop() {
     nextBuffer = null;
     source = null;
   }
+}
+
+export function resetAudioContext() {
+  stop();
+  context = createAudioContext();
 }
 
 // TODO: REFACTOR THIS TO HAVE LESS DUPE CODE YOU LAZY BUM
@@ -39,7 +66,8 @@ function playAudioId(track, curr, end) {
         context.decodeAudioData(nextAudioArrayBuffer, (bufferNext) => {
           nextBuffer = bufferNext;
         }, (err) => {
-          alert(err.err);
+          alert('error with decoding audio data');
+          alert(err);
         });
       };
       transaction.onerror = () => alert('error with indexeddb');
@@ -70,7 +98,8 @@ function playAudioId(track, curr, end) {
             context.decodeAudioData(nextAudioArrayBuffer, (bufferNext) => {
               nextBuffer = bufferNext;
             }, (err) => {
-              alert(err.err);
+              alert('error with decoding audio data');
+              alert(err);
             });
           };
           subTrans.onerror = () => alert('error with indexeddb');
@@ -83,7 +112,8 @@ function playAudioId(track, curr, end) {
           }
         };
       }, (err) => {
-        alert(err.err);
+        alert('error with decoding audio data');
+        alert(err);
       });
     };
     transaction.onerror = () => alert('error with indexeddb');
@@ -137,7 +167,8 @@ export async function play(track, partNumberStart) {
           store.dispatch('loadNextTrackAsCurrent');
         };
       }, (err) => {
-        alert(err.err);
+        alert('error with decoding audio data');
+        alert(err);
       });
     };
     transaction.onerror = () => alert('error with indexeddb');

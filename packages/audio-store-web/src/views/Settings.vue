@@ -27,6 +27,7 @@
     <Loading v-if="backupTracksLoading" class="ml-2"/>
     <MenuButton @click="backupPlaylists()" title="Backup Playlists" class="pb-1"/>
     <Loading v-if="backupPlaylistsLoading" class="ml-2"/>
+    <MenuButton @click="resetAudioContext()" title="Reset Audio Player" class="text-blue-300"/>
     <MenuButton @click="reload()" title="Reload" class="text-blue-500"/>
     <MenuButton @click="reset()" title="Reset" class="text-red-500"/>
   </div>
@@ -35,6 +36,7 @@
 <script>
 import db from '@/services/db';
 import { backupPlaylists as backPlays, backupTracks as backTracks } from '@/services/backup';
+import { resetAudioContext } from '@/services/player';
 
 import MenuButton from '@/components/MenuButton.vue';
 import Loading from '@/components/Loading.vue';
@@ -76,6 +78,9 @@ export default {
     },
     reload() {
       window.location.reload();
+    },
+    resetAudioContext() {
+      resetAudioContext();
     },
   },
 };
