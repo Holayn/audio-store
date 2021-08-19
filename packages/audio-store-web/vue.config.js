@@ -11,6 +11,7 @@ module.exports = {
     plugins: [
       // Other plugins...
       new GenerateSW({
+        cleanupOutdatedCaches: true,
         maximumFileSizeToCacheInBytes: 5000000,
       }),
     ],
