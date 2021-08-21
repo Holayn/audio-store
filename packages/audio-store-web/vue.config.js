@@ -8,6 +8,7 @@ module.exports = {
     cert: fs.readFileSync(__dirname + '/192.168.0.133.pem', 'utf8'),
   },
   configureWebpack: {
+    watch: true,
     plugins: [
       // Other plugins...
       new GenerateSW({

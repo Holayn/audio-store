@@ -24,7 +24,7 @@
         load all
       </button>
     </div>
-    <div class="flex overflow-y-auto">
+    <div class="flex flex-1 overflow-y-auto">
       <div class="max-w-full w-full">
         <Track
           v-for="(track, index) in tracks"
