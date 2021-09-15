@@ -17,5 +17,6 @@ module.exports = {
     'class-methods-use-this': 'off',
     'import/prefer-default-export': 'off',
     'max-len': 'off',
+    'linebreak-style': 'off'
   },
 };
