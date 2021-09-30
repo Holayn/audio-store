@@ -146,8 +146,6 @@ export async function play(track, partNumberStart) {
   localStorage.setItem('trackId', track.id);
   localStorage.setItem('playlistId', store.state.currentPlaylistId);
 
-  // have to construct source out here - user action not passed into callback
-  source = context.createBufferSource();
   if (track.hasParts) {
     if (partToStart) {
       playAudioId(track, partToStart, track.audioIds.length);
@@ -157,11 +155,15 @@ export async function play(track, partNumberStart) {
   } else {
     const transaction = db.transaction(['audio']).objectStore('audio').get(track.audioId);
     transaction.onsuccess = (e) => {
+      // have to construct source out here - user action not passed into callback
+      source = context.createBufferSource();
       const audioArrayBuffer = e.target.result.data;
       context.decodeAudioData(audioArrayBuffer, (buffer) => {
         source.buffer = buffer;
         source.connect(context.destination);
         source.start();
+        context.suspend();
+        context.resume();
         store.state.hardwarePlayerLoading = false;
         source.onended = function () {
           store.dispatch('loadNextTrackAsCurrent');
