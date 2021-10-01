@@ -27,7 +27,6 @@ app.use(history({
     {
       from: /\/api/,
       to: function(context) {
-        console.log('WTF');
         return context.parsedUrl.pathname;
       }
     },

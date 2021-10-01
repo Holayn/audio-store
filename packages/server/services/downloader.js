@@ -1,6 +1,5 @@
 const fs = require('fs');
 const ytdl = require('ytdl-core');
-const sanitize = require("sanitize-filename");
 const ffmpeg = require('fluent-ffmpeg');
 const ytpl = require('ytpl');
 
@@ -33,12 +32,28 @@ const getInfo = async (url) => {
   }
 };
 
-const download = async (url) => {
+/**
+ *
+ * @param {*} url
+ * @param {*} parts if the download should even consider splitting the file into parts
+ */
+const download = async (url, canSplitIntoParts) => {
   const {videoDetails} = await ytdl.getBasicInfo(url);
   const {title, videoId, lengthSeconds} = videoDetails;
 
   if (library[videoId]) {
-    return library[videoId];
+    const { filename } = library[videoId];
+    if (canSplitIntoParts && lengthSeconds > 300) {
+      // files were downloaded before, so they were deleted
+      const parts = await split(filename, videoId);
+      return {
+        filename,
+        parts,
+      };
+    }
+    else {
+      return library[videoId];
+    }
   }
 
   return new Promise(async (res, rej) => {
@@ -60,58 +75,55 @@ const download = async (url) => {
     });
     proc.on('end', async () => {
       console.log('done');
-      // 5 minutes
-      if (lengthSeconds > 300) {
-        // split into 1 minute chunks
-        const numParts = Math.ceil(lengthSeconds / 60);
-        const partProc = ffmpeg(filename).outputOptions(['-f segment', '-segment_time 60', '-c copy']).output(`${AUDIO_FILES_DIRECTORY}/[[[${videoId}]]]-[[[%03d]]].mp3`);
 
-        partProc.run();
-        await new Promise(
-          (partRes) => {
-            partProc.on('end', () => {
-              console.log('splitting done');
-              partRes();
-            });
-            partProc.on('error', (e) => {
-              console.log(e);
-            });
-          }
-        );
-
-        const parts = [];
-        for (let i = 0; i < numParts; i += 1) {
-          parts.push(`${AUDIO_FILES_DIRECTORY}/[[[${videoId}]]]-[[[${getFileNum(i)}]]].mp3`);
+      Object.assign(library, {
+        [videoId]: {
+          filename,
+          title,
         }
+      });
 
-        Object.assign(library, {
-          [videoId]: {
-            filename,
-            parts,
-          }
-        });
+      fs.writeFileSync('library.json', JSON.stringify(library));
 
-        // delete original file
-        fs.unlinkSync(filename);
+      // 5 minutes
+      if (canSplitIntoParts && lengthSeconds > 300) {
+        const parts = await split(filenane, videoId);
 
         res({
           filename,
           parts,
         });
       } else {
-        Object.assign(library, {
-          [videoId]: {
-            filename,
-          }
-        });
+        res({filename});
       }
-
-
-      fs.writeFileSync('library.json', JSON.stringify(library));
-      res({filename});
     });
   });
 };
+
+const split = async (filename, videoId) => {
+  const numParts = Math.ceil(lengthSeconds / 60);
+  const partProc = ffmpeg(filename).outputOptions(['-f segment', '-segment_time 60', '-c copy']).output(`${AUDIO_FILES_DIRECTORY}/[[[${videoId}]]]-[[[%03d]]].mp3`);
+
+  partProc.run();
+  await new Promise(
+    (partRes) => {
+      partProc.on('end', () => {
+        console.log('splitting done');
+        partRes();
+      });
+      partProc.on('error', (e) => {
+        console.log(e);
+      });
+    }
+  );
+
+  const parts = [];
+  for (let i = 0; i < numParts; i += 1) {
+    parts.push(`${AUDIO_FILES_DIRECTORY}/[[[${videoId}]]]-[[[${getFileNum(i)}]]].mp3`);
+  }
+
+  return parts;
+}
 
 const getFileNum = (num) => {
   let str = `${num}`;

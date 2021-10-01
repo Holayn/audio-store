@@ -64,7 +64,7 @@ router.get('/download', async (req, res) => {
   }
 
   try {
-    const {filename, parts} = await downloader.download(req.query.url);
+    const {filename, parts} = await downloader.download(req.query.url, req.query.splitIntoParts);
 
     if (parts) {
       res.send({
@@ -91,6 +91,17 @@ router.get('/download-part', async (req, res) => {
   }
 
   const audioFileName = req.query.part;
+
+  if (fs.existsSync(audioFileName)) {
+    setTimeout(() => {
+      fs.unlinkSync(audioFileName);
+    });
+  }
+  else {
+    console.error('no such file');
+    res.sendStatus(400);
+  }
+
 
   res.sendFile(audioFileName, {
     root: path.join(__dirname, '../'),
