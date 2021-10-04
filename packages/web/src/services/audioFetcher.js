@@ -45,7 +45,7 @@ export async function fetchInfo(url) {
 }
 
 export async function fetchPart(partFilename) {
-  const apiUrl = `${AUDIO_FETCH_BASE_URL}/download-part?part=${partFilename}`;
+  const apiUrl = `${AUDIO_FETCH_BASE_URL}/download-part?part=${partFilename}&splitIntoParts=true`;
   return (await fetch(apiUrl).catch(() => {
     alert('something went wrong');
     throw new Error();

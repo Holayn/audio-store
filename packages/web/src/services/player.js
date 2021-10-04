@@ -30,8 +30,9 @@ function createAudioContext() {
 }
 
 let context = createAudioContext();
+window.context = context;
 
-let source;
+let source = null;
 
 let nextBuffer;
 
@@ -55,6 +56,7 @@ function playAudioId(track, curr, end) {
   const audioId = track.audioIds[curr];
   source = context.createBufferSource();
   if (nextBuffer) {
+    context.resume();
     source.buffer = nextBuffer;
     source.connect(context.destination);
     source.start();
@@ -85,6 +87,7 @@ function playAudioId(track, curr, end) {
     transaction.onsuccess = (e) => {
       const audioArrayBuffer = e.target.result.data;
       context.decodeAudioData(audioArrayBuffer, (buffer) => {
+        context.resume();
         store.state.hardwarePlayerLoading = false;
         source.buffer = buffer;
         source.connect(context.destination);
@@ -155,15 +158,13 @@ export async function play(track, partNumberStart) {
   } else {
     const transaction = db.transaction(['audio']).objectStore('audio').get(track.audioId);
     transaction.onsuccess = (e) => {
-      // have to construct source out here - user action not passed into callback
       source = context.createBufferSource();
       const audioArrayBuffer = e.target.result.data;
       context.decodeAudioData(audioArrayBuffer, (buffer) => {
+        context.resume();
         source.buffer = buffer;
         source.connect(context.destination);
         source.start();
-        context.suspend();
-        context.resume();
         store.state.hardwarePlayerLoading = false;
         source.onended = function () {
           store.dispatch('loadNextTrackAsCurrent');

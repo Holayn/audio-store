@@ -132,6 +132,10 @@ export default {
         return;
       }
 
+      // This is needed on mobile for some reason. AudioContext seems to get suspended after it's created, and it's
+      // not enough to unsuspend it after the audio has been decoded... it has to be done in both places.
+      window.context.resume();
+
       try {
         this.isPlaying = true;
         if (isFirstPlay) {
