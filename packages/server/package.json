@@ -1,5 +1,5 @@
 {
-  "name": "youtube-dl-server",
+  "name": "audio-store-server",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
